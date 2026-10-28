@@ -21,6 +21,7 @@
 - **Second phone peeking in**: a `fromTo` with immediateRender put it at y=900 from t=0. Include `opacity:0` in its from-vars.
 - **Iris that didn't reveal anything**: the incoming scene's root had a solid background. Root transparent, ground inside the clipped wrapper.
 - **Phone touching a title**: keep the phone's left edge right of the title zone (`TITLE_ZONE_RIGHT`), cap title width 760 px.
+- **Devanagari (and other scripts with marks above the line) cut off at the top by a wipe**: `clip-path: inset(0 100% 0 0)` clips to the text box, and vowel signs like ि ी rise above it at a tight line-height. Use negative vertical insets: `inset(-40% 100% -40% 0)` → `inset(-40% 0% -40% 0)`.
 - **Prop camera aimed at the wrong place**: compute the camera from the prop's own coordinates (`ty = targetY − scale × propY`) instead of guessing.
 
 ## Environment

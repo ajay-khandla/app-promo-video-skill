@@ -439,7 +439,7 @@ def build_s11():
     sc.js.append(f"tl.fromTo('#s11-cam', {{x:0, y:0, scale:1, opacity:1}}, {{x:{r(595 - 0.28*(PL+PW/2))}, y:{r(425 - 0.28*(PT+PH/2))}, scale:0.28, duration:0.6, ease:'power3.inOut', immediateRender:false}}, {sc.t(113.0)});"
                  f"tl.fromTo('#s11-cam', {{opacity:1}}, {{opacity:0, duration:0.2, immediateRender:false}}, {sc.t(113.45)});"
                  f"tl.fromTo('#s11-mark', {{opacity:0, scale:0.92}}, {{opacity:1, scale:1, duration:0.4, ease:'expo.out'}}, {sc.t(113.45)});"
-                 f"tl.fromTo('#s11-word', {{opacity:1, clipPath:'inset(0 100% 0 0)'}}, {{opacity:1, clipPath:'inset(0 0% 0 0)', duration:0.5, ease:'power3.out'}}, {sc.t(113.9)});"
+                 f"tl.fromTo('#s11-word', {{opacity:1, clipPath:'inset(-40% 100% -40% 0)'}}, {{opacity:1, clipPath:'inset(-40% 0% -40% 0)', duration:0.5, ease:'power3.out'}}, {sc.t(113.9)});"
                  f"tl.fromTo('#s11-latin', {{opacity:0, filter:'blur(8px)'}}, {{opacity:1, filter:'blur(0px)', duration:0.2}}, {sc.t(114.3)});"
                  f"tl.set('#s11-tag', {{opacity:1}}, {sc.t(116.1)});"
                  f"tl.fromTo('#s11-tag .w', {{color:'rgba(246,239,231,0.22)'}}, {{color:'#F6EFE7', duration:0.12, stagger:0.45, ease:'none'}}, {sc.t(116.1)});"
