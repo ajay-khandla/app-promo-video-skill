@@ -1,0 +1,6 @@
+# Voiceover script
+
+<!-- Paste the voiceover script here, word for word. Optionally tag lines with the screen to show, e.g.:
+[01-home] Meet ExampleApp — the fastest way to ...
+[02-booking] Book in two taps ...
+-->
