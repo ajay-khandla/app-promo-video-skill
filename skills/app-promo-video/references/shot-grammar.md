@@ -11,6 +11,7 @@ Numbers are for a 1920×1080 canvas at 30 fps with 1206×2622 iPhone screenshots
 ## Camera
 
 - One wrapper per scene, `transform-origin: 0 0`, tweened `x / y / scale`.
+- **Every scene opens on the full phone** (zoom 1), holds ~0.4 s so the viewer sees which screen this is, then zooms in: `sc.open_on(rect)` (use `frm=` for a camera carried in from the previous scene). Whip-ins land on the full phone too. Never open a scene already zoomed in.
 - `cam(x, y, w, h)` frames a screenshot region: zoom = min(2.9, 940/(w·0.33), 780/(h·0.33)); 2.9 keeps ~1 source px per screen px (sharp). Region centre lands at (≥1330, 470).
 - Moves 0.6 s `power2.inOut`; start a move ~0.15–0.3 s **before** the anchor word so the region is settled when the word lands.
 - Establish (zoom 1) → isolate (zoom on the region) → return (zoom 1) within a beat. A whole screen at zoom 1 is unreadable on a phone; it is for context only.

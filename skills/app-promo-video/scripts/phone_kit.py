@@ -136,6 +136,19 @@ class Scene:
             f"tl.fromTo('#{self.id}-cam', {json.dumps(a)}, {{...{json.dumps(b)}, duration:{dur}, ease:'{ease}', immediateRender:false}}, {self.t(abs_t)});")
         self.cam_state = b
 
+    def open_on(self, rect, hold=0.4, dur=0.6, frm=None):
+        """Open the scene on the full phone (zoom 1), hold, then zoom into rect (screenshot px).
+        frm: a camera state carried in from the previous scene; it settles to the full phone first."""
+        self.open_state = dict(BASE)
+        if frm is not None:
+            self.cam_set(frm)
+            self.cam_to(self.start, BASE, dur=0.5)
+            at = self.start + 0.5 + hold
+        else:
+            self.cam_set(BASE)
+            at = self.start + hold
+        self.cam_to(at, cam(*rect), dur=dur)
+
     # ---- phone screens --------------------------------------------------------
     def screen(self, key, abs_in, abs_out, enter="none", name=None):
         """Show screenshot `key` from abs_in to abs_out. enter: none | push (navigation) | fade (state change)."""
@@ -240,7 +253,7 @@ class Scene:
 
     # ---- transitions ------------------------------------------------------------
     def whip_in(self):
-        a = dict(self.cam_state)
+        a = dict(getattr(self, "open_state", None) or self.cam_state)
         b = dict(a)
         a["x"] = a["x"] + 1100
         self.js.append(f"tl.fromTo('#{self.id}-cam', {{...{json.dumps(a)}, filter:'blur(18px)'}}, {{...{json.dumps(b)}, filter:'blur(0px)', duration:0.38, ease:'power3.out'}}, 0);")

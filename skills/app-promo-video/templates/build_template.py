@@ -65,8 +65,8 @@ def build_s1():
 def build_s2():
     sc = Scene("s2")
     sc.screen("home", 10.0, TOTAL)
-    sc.cam_set(BASE)
-    sc.whip_in()
+    sc.open_on((54, 1000, 1100, 800))   # full phone first, then zoom into the region
+    sc.whip_in()                         # lands on the full phone
     sc.title("s2-t", "Download today", 11.0, None, size=96)
     sc.write(phone_stage(sc))
 

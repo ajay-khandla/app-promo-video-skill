@@ -22,6 +22,7 @@
 - **Iris that didn't reveal anything**: the incoming scene's root had a solid background. Root transparent, ground inside the clipped wrapper.
 - **Phone touching a title**: keep the phone's left edge right of the title zone (`TITLE_ZONE_RIGHT`), cap title width 760 px.
 - **Devanagari (and other scripts with marks above the line) cut off at the top by a wipe**: `clip-path: inset(0 100% 0 0)` clips to the text box, and vowel signs like ि ी rise above it at a tight line-height. Use negative vertical insets: `inset(-40% 100% -40% 0)` → `inset(-40% 0% -40% 0)`.
+- **Scenes opening already zoomed in** read as a jump cut into a detail; viewers asked for the full screen first. Open with `open_on(rect)`, and make `whip_in()` land on the full phone (it uses `open_state`), or the camera snaps back out when the zoom starts.
 - **Prop camera aimed at the wrong place**: compute the camera from the prop's own coordinates (`ty = targetY − scale × propY`) instead of guessing.
 
 ## Environment

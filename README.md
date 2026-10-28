@@ -125,6 +125,7 @@ from phone_kit import *
 
 sc = Scene("s4")
 sc.screen("owed", 37.0, 44.65, enter="push")          # real screenshot, iOS push
+sc.open_on((48, 420, 1107, 210))                      # open on the full phone, then zoom in
 sc.cam_to(38.55, cam(48, 420, 1107, 210))             # frame a region (screenshot px)
 sc.ol(39.1, (90, 450, 495, 165))                      # outline lands on "लेना"
 sc.amount("s4-a1", "लेना", "₹1,19,250", C["green"], 39.35, 42.6)
