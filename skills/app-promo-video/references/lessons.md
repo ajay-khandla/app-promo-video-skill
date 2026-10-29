@@ -23,7 +23,13 @@
 - **Phone touching a title**: keep the phone's left edge right of the title zone (`TITLE_ZONE_RIGHT`), cap title width 760 px.
 - **Devanagari (and other scripts with marks above the line) cut off at the top by a wipe**: `clip-path: inset(0 100% 0 0)` clips to the text box, and vowel signs like ि ी rise above it at a tight line-height. Use negative vertical insets: `inset(-40% 100% -40% 0)` → `inset(-40% 0% -40% 0)`.
 - **Scenes opening already zoomed in** read as a jump cut into a detail; viewers asked for the full screen first. Open with `open_on(rect)`, and make `whip_in()` land on the full phone (it uses `open_state`), or the camera snaps back out when the zoom starts.
+- **Frame 0 of the render showing end states** (slips already placed, circle already drawn) although preview snapshots looked right: the renderer's first frame can show the authored CSS before GSAP's immediate from-states apply. Give every element that animates in later its starting state in CSS too (`opacity:0`, `stroke-dashoffset`, `clip-path`), and include `opacity` in its tween. Always look at frame 0 of the MP4 — it is the thumbnail.
+- **Text wrapping into the next element**: a 2-line Hindi title pushed into the Pro tag under it. Place the next element below two lines, or check width.
 - **Prop camera aimed at the wrong place**: compute the camera from the prop's own coordinates (`ty = targetY − scale × propY`) instead of guessing.
+
+## Sound
+- A mono voiceover measured alone reads ~3 LU quieter than the rendered stereo mix. Normalize the voice with two-pass `loudnorm` (I=-16, TP=-1.5) — `normalize-audio` only changes gain and would clip — then set `vo_volume` ≈ 0.85 so the MP4 lands near -15 LUFS. Measure the MP4 with `ffmpeg -af ebur128=peak=true`.
+- Check that normalizing didn't shift timing: compare `silencedetect` times before and after.
 
 ## Environment
 - macOS ships Python 3.9 (no backslashes inside f-string expressions) and bash 3.2 (no `${var,,}`).

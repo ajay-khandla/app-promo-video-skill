@@ -350,9 +350,10 @@ def build_captions(caps, bottom=52, size=44):
 # =====================================================================================
 # index
 # =====================================================================================
-def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", music=None, music_volume=0.14):
+def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, music=None, music_volume=0.14):
     """Root composition: scene hosts, captions host, voiceover, optional music bed and SFX.
-    sfx = [(id, file in assets/sfx/, abs_time, volume)]; each gets its own track."""
+    sfx = [(id, file in assets/sfx/, abs_time, volume)]; each gets its own track.
+    A mono voiceover at -16 LUFS measures ~3 LU louder once rendered to stereo: vo_volume 0.85 lands the mix near -14.5."""
     hosts = "\n".join(
         f'      <div id="{sid}" data-composition-id="{sid}" data-composition-src="compositions/{sid}.html" data-start="{a}" '
         f'data-duration="{r(b-a)}" data-track-index="1" data-track-kind="graphics" data-width="{W}" data-height="{H}" style="z-index:{i+1}"></div>'
@@ -417,7 +418,7 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", music=None, musi
     <div id="root" data-composition-id="main" data-start="0" data-duration="{TOTAL}" data-width="{W}" data-height="{H}">
 {hosts}
       <div id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="{TOTAL}" data-track-index="4" data-track-kind="captions" data-width="{W}" data-height="{H}" style="z-index:50"></div>
-      <audio id="vo" class="clip" src="{voiceover}" data-start="0" data-track-index="10" data-volume="1"></audio>
+      <audio id="vo" class="clip" src="{voiceover}" data-start="0" data-track-index="10" data-volume="{vo_volume}"></audio>
 {music_html}
 {sfx_html}
     </div>

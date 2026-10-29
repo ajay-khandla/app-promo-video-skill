@@ -88,7 +88,7 @@ def build_s1():
                '<div class="strike" style="left:330px;top:592px;width:430px;transform:rotate(1.5deg)"></div>')
     circle = ('<svg id="s1-circ" class="circ" style="left:595px;top:150px" width="300" height="150" viewBox="0 0 300 150">'
               '<path d="M30 80 C 30 20, 270 15, 275 70 S 60 140, 40 70" fill="none" stroke="#C0412A" stroke-width="7" stroke-linecap="round"/></svg>')
-    query = '<div id="s1-q" class="redq" style="left:1200px;top:318px">दिया?</div>'
+    query = '<div id="s1-q" class="redq" style="left:1290px;top:300px">दिया?</div>'
     slip1 = ('<div id="s1-slip1" class="slip" style="left:1450px;top:170px">'
              '<div class="slip-h">किसान खाद भंडार</div><div>उर्वरक (DAP) – 2 बोरी</div><div>कुल ₹6,400</div>'
              '<div class="slip-due">बाकी: ______</div></div>')
@@ -105,6 +105,8 @@ def build_s1():
     .hand {{ position:absolute; left:320px; font-family:'Kalam'; font-weight:700; font-size:60px; color:#23305C; white-space:nowrap; }}
     .strike {{ position:absolute; height:5px; background:#23305C; border-radius:3px; opacity:0.85; }}
     .circ {{ position:absolute; overflow:visible; }}
+    #s1-circ path {{ stroke-dasharray:900; stroke-dashoffset:900; }}
+    #s1-q, .slip {{ opacity:0; }}
     .redq {{ position:absolute; font-family:'Kalam'; font-weight:700; font-size:62px; color:#C0412A; transform:rotate(-6deg); white-space:nowrap; }}
     .slip {{ position:absolute; width:440px; padding:34px 36px; background:#FFFDF7; font-family:'Kalam'; font-weight:700;
       font-size:42px; line-height:1.5; color:#2B2B2B; box-shadow:0 18px 40px rgba(27,38,32,0.22); border-top:10px dotted #E9DCC6; }}
@@ -122,10 +124,10 @@ def build_s1():
     tl.fromTo(cam, {x:-250, y:140, scale:1.22}, {x:-290, y:120, scale:1.26, duration:2.0, ease:'none'}, 0);
     tl.fromTo('#s1-circ path', {strokeDasharray:900, strokeDashoffset:900}, {strokeDashoffset:0, duration:0.7, ease:'power2.inOut'}, 0.9);
     tl.fromTo(cam, {x:-290, y:120, scale:1.26}, {x:-292, y:63, scale:1.1, duration:0.7, ease:'power2.inOut', immediateRender:false}, 2.0);
-    tl.fromTo('#s1-slip1', {x:700, rotation:4}, {x:0, rotation:-6, duration:0.6, ease:'expo.out'}, 2.15);
+    tl.fromTo('#s1-slip1', {x:700, rotation:4, opacity:0}, {x:0, rotation:-6, opacity:1, duration:0.6, ease:'expo.out'}, 2.15);
     tl.fromTo('#s1-q', {opacity:0, scale:1.3}, {opacity:1, scale:1, duration:0.25, ease:'expo.out'}, 3.9);
     tl.fromTo(cam, {x:-292, y:63, scale:1.1}, {x:-220, y:-180, scale:1.0, duration:0.7, ease:'power2.inOut', immediateRender:false}, 5.45);
-    tl.fromTo('#s1-slip2', {x:800, rotation:-3}, {x:0, rotation:5, duration:0.6, ease:'expo.out'}, 5.7);
+    tl.fromTo('#s1-slip2', {x:800, rotation:-3, opacity:0}, {x:0, rotation:5, opacity:1, duration:0.6, ease:'expo.out'}, 5.7);
     tl.fromTo(cam, {x:-220, y:-180, scale:1.0}, {x:600, y:345, scale:0.5, duration:0.9, ease:'power2.inOut', immediateRender:false}, 8.5);
     tl.set('#s1-title', {opacity:1}, 9.0);
     tl.fromTo('#s1-title .w', {opacity:0, filter:'blur(6px)'}, {opacity:1, filter:'blur(0px)', duration:0.13, stagger:0.067, ease:'power2.out'}, 9.0);
@@ -262,7 +264,7 @@ def build_s6():
     sc.screen("acts", 61.0, 62.75, enter="push")
     sc.screen("actdetail", 62.55, 68.6, enter="push")
     sc.open_on((45, 435, 1125, 1365), hold=0.45)
-    sc.css.append(f"#s6-ir {{ position:absolute; inset:0; background:{C['ground']}; }}")
+    sc.css.append(f"#s6-ir {{ position:absolute; inset:0; background:{C['ground']}; clip-path:circle(0px at 1244px 837px); }}")
     sc.js.append("tl.fromTo('#s6-ir', {clipPath:'circle(0px at 1244px 837px)'}, {clipPath:'circle(2300px at 1244px 837px)', duration:0.4, ease:'power2.in'}, 0);")
     sc.ol(57.4, (54, 450, 342, 420))
     sc.ol(58.45, (816, 450, 345, 420))
@@ -275,7 +277,7 @@ def build_s6():
     sc.cam_to(64.5, BASE, dur=0.6)
     sc.items("s6-l", [("Spraying", 57.42), ("Irrigation", 58.47), ("Fertiliser", 59.6), ("Farm Work", 60.75)], 64.4,
              y=250, size=72, font="display", style="blur")
-    sc.html.append('<div id="s6-pro" class="pro" style="left:120px;top:430px"><span class="pro-tag">PRO</span>'
+    sc.html.append('<div id="s6-pro" class="pro" style="left:120px;top:520px"><span class="pro-tag">PRO</span>'
                    '<span class="pro-t">नया काम और रिमाइंडर</span></div>')
     t = sc.t(65.0)
     sc.js.append(f"tl.fromTo('#s6-pro', {{opacity:0, filter:'blur(8px)'}}, {{opacity:1, filter:'blur(0px)', duration:0.2}}, {t});")
@@ -380,6 +382,7 @@ def build_s9():
     sc.js.append(f"tl.fromTo('#s9-camB', {json.dumps(home_tiles)}, {{...{json.dumps(zt)}, duration:0.45, ease:'power3.in', immediateRender:false}}, {sc.t(98.8)});")
     sc.flood(C["ground"], 99.0, 0.25, 0, 1)
     sc.title("s9-t2", "नया फोन • वही हिसाब", 94.7, 98.0, y=330, size=70)
+    sc.css.append("#s9-camB { opacity:0; }")
     stage = phone_stage(sc) + f'<div id="s9-camB" class="cam" data-layout-allow-overflow>{phone_b}</div>'
     sc.write(stage)
 
@@ -405,7 +408,8 @@ def build_s10():
     sc.cam_to(107.3, cam(330, 500, 540, 160, zmax=3.0), dur=0.55)
     sc.amount("s10-a3", "Profit", "₹1,82,568", C["green"], 107.7, 109.25, y=300, size=150)
     sc.html.append('<div id="s10-ul" class="ul" style="left:124px;top:560px"></div>')
-    sc.js.append(f"tl.fromTo('#s10-ul', {{scaleX:0}}, {{scaleX:1, duration:0.45, ease:'expo.out'}}, {sc.t(107.95)});"
+    sc.css.append("#s10-ul { opacity:0; }")
+    sc.js.append(f"tl.fromTo('#s10-ul', {{scaleX:0, opacity:1}}, {{scaleX:1, opacity:1, duration:0.45, ease:'expo.out'}}, {sc.t(107.95)});"
                  f"tl.fromTo('#s10-ul', {{opacity:1}}, {{opacity:0, duration:0.15, immediateRender:false}}, {sc.t(109.1)});")
     sc.flood(C["green"], 109.0, 0.4, 0, 1)
     sc.css.append("#s10-a1 .amt-l, #s10-a2 .amt-l, #s10-a3 .amt-l { font-family:var(--font-display); }")
@@ -500,5 +504,5 @@ if __name__ == "__main__":
     for f in (build_s1, build_s2, build_s3, build_s4, build_s5, build_s6, build_s7, build_s8, build_s9, build_s10, build_s11):
         f()
     K.build_captions(CAPS)
-    K.build_index(sfx=SFX)
+    K.build_index(sfx=SFX, vo_volume=0.85)
     print("built", len(SCENES), "scenes + captions + index")

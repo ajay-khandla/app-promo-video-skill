@@ -67,6 +67,20 @@ The agent will:
 5. **Build and check.** It runs `check` until there are 0 errors, reviews the snapshot sheets and writes `REVIEW.md`.
 6. **Show, then render.** It opens the Studio preview and waits for your approval before rendering.
 
+### Style references (YouTube link or video file)
+
+Share a video you like and say what you like about it. The agent reviews it on a small budget:
+
+- **Overview:** `ref_review.py` writes a text summary (hard cuts, timings) plus at most 3 gridded contact sheets.
+- **Motion:** at most 3 motion strips, for the zoom, transition or text entrance worth learning from.
+
+From that it writes `REFERENCE.md`, which records:
+
+- **Take:** the grammar, mapped to our settings: device size and position, zoom amount and ease, text size and entrance, rhythm, transitions.
+- **Leave:** content that is not copied: their footage, colours, fonts, copy and music.
+
+Everything taken is rebuilt in your own brand and screens. Links are downloaded at 720p with `fetch_ref.sh` (needs `yt-dlp`), only after you agree. Full guide: [reference-review.md](skills/app-promo-video/references/reference-review.md).
+
 ### Input folder
 
 ```
@@ -75,6 +89,7 @@ inputs/<app-slug>/
   script.md         the voiceover script, word for word
   audio/            voiceover: one file or one clip per scene (e.g. an ElevenLabs export); music/ optional
   brand/            app icon 1024 px, logo (SVG preferred), fonts/, store badge files
+  refs/             optional style references (videos you like); not in git, never used as footage
   screens/ios/      real screenshots or screen recordings, numbered in order
   screens/android/  same for Android
 ```
@@ -88,10 +103,13 @@ skills/app-promo-video/
     decisions.md               the questions to ask, with recommended defaults
     shot-grammar.md            stage, camera, screens, attention, transitions, captions, end card — in numbers
     lessons.md                 lint errors, visual bugs and environment traps already met, with fixes
+    reference-review.md        take a reference video's grammar (not its content) in ~6 images
   scripts/
     transcribe_clips.sh        word timings for every clip (multilingual Whisper via `hyperframes transcribe`)
     tighten_voiceover.py       join clips, cap pauses, remap word times → voiceover.wav + timing.json
     grid_sheets.sh             gridded contact sheets for reading zoom regions off screenshots
+    ref_review.py              low-token review of a reference video: cuts, gridded contact sheets, motion strips
+    fetch_ref.sh               download a YouTube/other reference at ≤720p (yt-dlp), for review only
     phone_kit.py               the scene generator (camera, screens, taps, outlines, titles, numbers, lists,
                                transitions, captions, root composition)
   templates/

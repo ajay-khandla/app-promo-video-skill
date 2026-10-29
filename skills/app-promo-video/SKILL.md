@@ -16,13 +16,14 @@ The voiceover is the clock. Each sentence gets the real screen that proves it, s
 ## Work loop
 
 1. **Inventory** the inputs (`templates/brief.md` layout): voiceover clips or one file, the script, screenshots / recordings per platform, icon, logo, fonts, colours, store links, music. Look for an existing trailer project and existing screenshots before asking for new ones. Read the app's code for brand colours, fonts, Hindi/locale strings and which features are paid — facts, not guesses.
-2. **Ask, don't assume.** Put the open decisions to the person in one message, each with a recommendation (`references/decisions.md`): people/footage, formats, screens source, music, real vs script numbers, length, captions, platforms, store links. Stop until they answer.
-3. **Voiceover → clock.** `scripts/transcribe_clips.sh` (multilingual model for non-English), then `scripts/tighten_voiceover.py` → `voiceover.wav` + `timing.json` with every word's time on the master. Re-transcribe any clip whose words are missing with `-m medium`. Report the real length; it is set by the speech, not the script's estimate.
-4. **Map regions.** `scripts/grid_sheets.sh` makes gridded contact sheets; read each zoom target as `(x, y, w, h)` in source pixels.
-5. **Spec.** Write `SPEC.md` (HyperFrames `references/spec.md`): LOOK from the brand, then one line per shot with its anchor word and time. `references/shot-grammar.md` has the grammar.
-6. **Build.** `npx hyperframes init videos/<slug> --resolution landscape --non-interactive --skip-transcribe`, copy assets, copy `scripts/phone_kit.py` to `tools/` and write `tools/build.py` from `templates/build_template.py` (full example: `examples/kheti-hisab/build.py`). One scene per sentence group, 8–12 s each.
-7. **Check and review.** `npx hyperframes lint` → `check --json` (0 errors) → `snapshot --review`; read the beat sheet, seams and phone sheet; fix P0/P1; write `REVIEW.md`. `references/lessons.md` lists the failures already met and their fixes.
-8. **Preview, then render.** `npx hyperframes preview --background`, give the URL, wait for approval. Then `render --quality delivery`, copy to `exports/<slug>/`. Vertical/square cuts are sibling projects made after the master is approved.
+2. **Reference videos** (a YouTube link or a file the person likes): review them cheaply with `scripts/ref_review.py` (and `scripts/fetch_ref.sh` for links, after asking), write `REFERENCE.md` with what to take and what to leave, and fold it into the spec. Grammar only, never content — `references/reference-review.md`.
+3. **Ask, don't assume.** Put the open decisions to the person in one message, each with a recommendation (`references/decisions.md`): people/footage, formats, screens source, music, real vs script numbers, length, captions, platforms, store links. Stop until they answer.
+4. **Voiceover → clock.** `scripts/transcribe_clips.sh` (multilingual model for non-English), then `scripts/tighten_voiceover.py` → `voiceover.wav` + `timing.json` with every word's time on the master. Re-transcribe any clip whose words are missing with `-m medium`. Report the real length; it is set by the speech, not the script's estimate.
+5. **Map regions.** `scripts/grid_sheets.sh` makes gridded contact sheets; read each zoom target as `(x, y, w, h)` in source pixels.
+6. **Spec.** Write `SPEC.md` (HyperFrames `references/spec.md`): LOOK from the brand, then one line per shot with its anchor word and time. `references/shot-grammar.md` has the grammar.
+7. **Build.** `npx hyperframes init videos/<slug> --resolution landscape --non-interactive --skip-transcribe`, copy assets, copy `scripts/phone_kit.py` to `tools/` and write `tools/build.py` from `templates/build_template.py` (full example: `examples/kheti-hisab/build.py`). One scene per sentence group, 8–12 s each.
+8. **Check and review.** `npx hyperframes lint` → `check --json` (0 errors) → `snapshot --review`; read the beat sheet, seams and phone sheet; fix P0/P1; write `REVIEW.md`. `references/lessons.md` lists the failures already met and their fixes.
+9. **Preview, then render.** `npx hyperframes preview --background`, give the URL, wait for approval. Then `render --quality delivery`, copy to `exports/<slug>/`. Vertical/square cuts are sibling projects made after the master is approved.
 
 ## Rules that matter most
 

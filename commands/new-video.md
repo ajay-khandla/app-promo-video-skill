@@ -21,11 +21,12 @@ Load the `/app-promo-video` skill and follow its work loop; it builds on `/hyper
 
 1. Work out the slug from the arguments. If `inputs/<slug>/` is missing, create it from the template, say exactly what to drop where, and stop.
 2. Inventory the inputs and look for existing material (an earlier trailer project, screenshot sets, the app's code for colours, fonts, localized strings and paid features). Report what you have, what is missing, and what you'll do about each gap.
-3. Put the open decisions to the person in one message with recommendations (skill: `references/decisions.md`). Stop until they answer, unless `--no-stops` was passed.
-4. Voiceover → `voiceover.wav` + `timing.json` (skill: `scripts/transcribe_clips.sh`, `scripts/tighten_voiceover.py`). Report the real length.
-5. Map screenshot regions (`scripts/grid_sheets.sh`), write `SPEC.md`, build with `tools/build.py` + `phone_kit.py`.
-6. `npx hyperframes check --json` to 0 errors, `snapshot --review`, fix, write `REVIEW.md`.
-7. `npx hyperframes preview --background`, share the URL, and wait for approval. Then `npx hyperframes render --quality delivery` and copy to `exports/`.
-8. `--format all`: after the 16:9 master is approved, build the 9:16 and 1:1 cuts as sibling projects.
+3. If the person shared reference videos (a YouTube link or files in `inputs/<slug>/refs/`), review them with the skill's `references/reference-review.md` (ask before downloading a link), write `REFERENCE.md`, and show its TAKE/LEAVE list.
+4. Put the open decisions to the person in one message with recommendations (skill: `references/decisions.md`). Stop until they answer, unless `--no-stops` was passed.
+5. Voiceover → `voiceover.wav` + `timing.json` (skill: `scripts/transcribe_clips.sh`, `scripts/tighten_voiceover.py`). Report the real length.
+6. Map screenshot regions (`scripts/grid_sheets.sh`), write `SPEC.md`, build with `tools/build.py` + `phone_kit.py`.
+7. `npx hyperframes check --json` to 0 errors, `snapshot --review`, fix, write `REVIEW.md`.
+8. `npx hyperframes preview --background`, share the URL, and wait for approval. Then `npx hyperframes render --quality delivery` and copy to `exports/`.
+9. `--format all`: after the 16:9 master is approved, build the 9:16 and 1:1 cuts as sibling projects.
 
 Rules: real screens and real numbers only; the script's wording in captions, timed to what the voice actually says; paid features marked; never regenerate over edits made in Studio.

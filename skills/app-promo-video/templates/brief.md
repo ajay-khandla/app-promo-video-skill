@@ -21,6 +21,7 @@ Copy this folder to `inputs/<app-slug>/`, fill this file in, drop the files in t
 - **Captions on screen:** yes / no
 - **Anything that must appear:** (features, numbers, awards — only real ones)
 - **Anything to avoid:**
+- **Style references:** YouTube links, or video files in `refs/` — and what you like in each (zoom style, pace, text, device size…). Used for style only, never copied.
 
 ## Brand
 
@@ -37,6 +38,7 @@ script.md         the voiceover script, word for word
 brand/            logo.svg (or transparent logo.png), app-icon.png (1024×1024), fonts/
 screens/ios/      iPhone screenshots or screen recordings, named by order: 01-home.png, 02-...
 screens/android/  Android screenshots or screen recordings, same naming
+refs/             optional: reference videos you like (style only)
 ```
 
 Tip: in `script.md`, you can mark which screen goes with which line, e.g. `[02-booking]`.

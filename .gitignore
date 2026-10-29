@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .hyperframes/
 node_modules/
+refs/
+*.mp4
