@@ -46,13 +46,21 @@ S = 0.33
 SW = SH = BEZ = PW = PH = PL = PT = OX = OY = 0.0
 SCREEN_RADIUS = 58
 TITLE_ZONE_RIGHT = 905
+# where cam() puts a framed region and where lift() may place a card (landscape defaults; see setup())
+FRAME = {"cx_min": 1330, "cy": 470, "max_w": 940, "max_h": 780, "right_max": 1850}
+LIFT_BOX = (925, 70, 1870, 900)
+LIFT_DY = 0
 BASE = {"x": 0.0, "y": 0.0, "scale": 1.0}
 CENTER = {"x": 0.0, "y": 0.0, "scale": 1.0}
 
 
 def setup(root, total, scenes, shots, colors, fonts, font_main, font_display, lang="en",
           screen_px=(1206, 2622), scale=0.33, bezel=13, phone_center_x=1240, phone_top=40,
-          screen_radius=58, title_zone_right=905, width=1920, height=1080):
+          screen_radius=58, title_zone_right=905, width=1920, height=1080, frame=None, lift_box=None, lift_dy=0):
+    """Landscape defaults put titles left and the phone right. For portrait (1080 x 1920) pass e.g.
+    phone_center_x=540, phone_top=560, scale=0.5, title_zone_right=0,
+    frame={"cx_min": 540, "cy": 1180, "max_w": 1000, "max_h": 1100, "right_max": 1040},
+    lift_box=(40, 600, 1040, 1500), lift_dy=-80."""
     """Configure the kit for one film. Call before `from phone_kit import *`."""
     g = globals()
     missing = [k for k in REQUIRED_COLORS if k not in colors]
@@ -66,6 +74,8 @@ def setup(root, total, scenes, shots, colors, fonts, font_main, font_display, la
              W=width, H=height, S=scale, SW=sw, SH=sh, BEZ=bezel, PW=pw, PH=ph, PL=pl, PT=phone_top,
              OX=pl + bezel, OY=phone_top + bezel, SCREEN_RADIUS=screen_radius,
              TITLE_ZONE_RIGHT=title_zone_right,
+             FRAME=frame or {"cx_min": 1330, "cy": 470, "max_w": 940, "max_h": 780, "right_max": width - 70},
+             LIFT_BOX=lift_box or (title_zone_right + 20, 70, width - 50, 900), LIFT_DY=lift_dy,
              CENTER={"x": width / 2 - phone_center_x, "y": 0.0, "scale": 1.0})
     (Path(root) / "compositions").mkdir(exist_ok=True)
 
@@ -82,14 +92,14 @@ def cam(rx, ry, rw, rh, zmax=2.9):
     phone's left edge is kept right of TITLE_ZONE_RIGHT so left-side titles never collide.
     """
     cx, cy = rx + rw / 2, ry + rh / 2
-    z = min(zmax, 940 / (rw * S), 780 / (rh * S))
+    z = min(zmax, FRAME["max_w"] / (rw * S), FRAME["max_h"] / (rh * S))
     z = max(z, 1.0)
     while True:
-        px = max(1330, TITLE_ZONE_RIGHT + z * S * cx)
-        if px + z * S * rw / 2 <= W - 70 or z <= 1.0:
+        px = max(FRAME["cx_min"], TITLE_ZONE_RIGHT + z * S * cx)
+        if px + z * S * rw / 2 <= FRAME["right_max"] or z <= 1.0:
             break
         z -= 0.05
-    py = 470
+    py = FRAME["cy"]
     return {"x": round(px - z * (OX + S * cx), 2), "y": round(py - z * (OY + S * cy), 2),
             "scale": round(z, 3)}
 
@@ -283,8 +293,9 @@ class Scene:
         self.n_lift += 1
         bw, bh = w * S * k, h * S * k
         cx0, cy0 = OX + (x + w / 2) * S, OY + (y + h / 2) * S
-        tx = min(max(cx0, TITLE_ZONE_RIGHT + 20 + bw / 2), W - 50 - bw / 2)
-        ty = min(max(cy0, 70 + bh / 2), 900 - bh / 2)
+        x0, y0, x1, y1 = LIFT_BOX
+        tx = min(max(cx0, x0 + bw / 2), x1 - bw / 2)
+        ty = min(max(cy0 + LIFT_DY, y0 + bh / 2), y1 - bh / 2)
         badge = '<div class="lift-ok">✓</div>' if check else ""
         self.lift_html.append(
             f'<div id="{lid}" class="lift" style="left:{r(cx0-bw/2)}px;top:{r(cy0-bh/2)}px;width:{r(bw)}px;height:{r(bh)}px;'
@@ -429,7 +440,7 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
         {"id": "color-accent", "type": "color", "label": "Brand colour", "default": C["brand"]},
     ], ensure_ascii=False)
     out = f"""<!doctype html>
-<html lang="{LANG}" data-resolution="landscape" data-composition-variables='{vars_}'>
+<html lang="{LANG}" data-resolution="{'portrait' if H > W else 'landscape'}" data-composition-variables='{vars_}'>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width={W}, height={H}" />
@@ -445,7 +456,7 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
       * {{ margin:0; padding:0; box-sizing:border-box; }}
       html, body {{ margin:0; width:{W}px; height:{H}px; overflow:hidden; background:var(--ground); }}
       #root {{ position:relative; width:100%; height:100%; }}
-      .patch {{ position:absolute; left:780px; top:-100px; width:1000px; height:1280px; border-radius:50%;
+      .patch {{ position:absolute; left:{r(PL + PW / 2 - 460)}px; top:{PT - 140}px; width:1000px; height:{r(PH + 389)}px; border-radius:50%;
         background:radial-gradient(closest-side, {C['patch']} 0%, rgba(251,247,241,0) 100%); }}
       .cam {{ position:absolute; left:0; top:0; width:{W}px; height:{H}px; transform-origin:0 0; }}
       .phone {{ position:absolute; width:{r(PW)}px; height:{r(PH)}px; padding:{BEZ}px; background:#111; border-radius:{SCREEN_RADIUS+BEZ}px;
@@ -462,7 +473,7 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
       .lift-ok {{ position:absolute; right:-22px; top:-22px; width:64px; height:64px; border-radius:50%; background:{C['brand']};
         color:#fff; font-family:var(--font-display); font-weight:800; font-size:38px; line-height:64px; text-align:center; opacity:0;
         box-shadow:0 8px 18px rgba(27,38,32,0.25); }}
-      .sweep {{ position:absolute; left:{960-1700}px; top:{540-1700}px; width:3400px; height:3400px; border-radius:50%; z-index:70; }}
+      .sweep {{ position:absolute; left:{W // 2 - 1700}px; top:{H // 2 - 1700}px; width:3400px; height:3400px; border-radius:50%; z-index:70; }}
       .ol {{ position:absolute; border:2.2px solid {C['accent']}; border-radius:9px; opacity:0; z-index:41;
         box-shadow:0 0 0 1px rgba(232,162,58,0.25); }}
       .ttl {{ position:absolute; line-height:1.25; opacity:0; }}

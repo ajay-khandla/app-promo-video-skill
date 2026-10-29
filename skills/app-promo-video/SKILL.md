@@ -24,7 +24,7 @@ The voiceover is the clock. Each sentence gets the real screen that proves it, s
 7. **Spec.** Write `SPEC.md` (HyperFrames `references/spec.md`): LOOK from the brand, then one line per shot with its anchor word and time. `references/shot-grammar.md` has the grammar.
 8. **Build.** `npx hyperframes init videos/<slug> --resolution landscape --non-interactive --skip-transcribe`, copy assets, copy `scripts/phone_kit.py` to `tools/` and write `tools/build.py` from `templates/build_template.py` (full example: `examples/kheti-hisab/build.py`). One scene per sentence group, 8–12 s each.
 9. **Check and review.** `npx hyperframes lint` → `check --json` (0 errors) → `snapshot --review`; read the beat sheet, seams and phone sheet; fix P0/P1; write `REVIEW.md`. `references/lessons.md` lists the failures already met and their fixes.
-10. **Preview, then render.** `npx hyperframes preview --background`, give the URL, wait for approval. Then `render --quality delivery`, copy to `exports/<slug>/`. Vertical/square cuts are sibling projects made after the master is approved.
+10. **Preview, then render.** `npx hyperframes preview --background`, give the URL, wait for approval. Then `render --quality delivery`, copy to `exports/<slug>/`. Vertical/square cuts are sibling projects made after the master is approved (`references/shot-grammar.md` "Vertical cut").
 
 ## Rules that matter most
 

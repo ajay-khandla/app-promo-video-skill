@@ -58,3 +58,13 @@ Numbers are for a 1920×1080 canvas at 30 fps with 1206×2622 iPhone screenshots
 ## End card
 
 App icon (the phone can shrink into it), wordmark wipes in, Latin name, tagline lighting word by word on the voice, a sub-line, then the official App Store / Google Play badges. Hold ≥2.5 s after the last word.
+
+## Vertical cut (9:16)
+
+Made after the 16:9 master is approved, as a sibling project (`videos/<slug>-vertical/`). Example: `examples/kheti-hisab/build_vertical.py`.
+
+- **Voiceover**: 30–40 s cut from the master's voiceover in a few voice-continuous pieces: a 2 s hook question, the name reveal, two feature beats that each end on a result, and the end card. Cut only at word gaps from `timing.json`; write `segments.json` (`orig_start`, `orig_end`, `v_start`) and map every master-clock time with `V(t)`, so the scene code keeps the master's word times.
+- **Layout** (1080 × 1920): title zone at the top (y 120–410), one caption band under it (y ≈ 435–505, `build_captions(bottom=H-505)`), and the phone below at scale 0.5 (top 560). This keeps text out of the platform's bottom and right overlays.
+- **Kit settings**: `setup(width=1080, height=1920, scale=0.5, bezel=20, phone_center_x=540, phone_top=560, screen_radius=88, title_zone_right=0, frame={"cx_min": 540, "cy": 1200, "max_w": 1000, "max_h": 1100, "right_max": 1060}, lift_box=(40, 620, 1040, 1500), lift_dy=-80)`; lifts at k ≈ 1.6–2.0.
+- **Taps near the bottom** (save buttons): raise the phone ~130 px for the tap instead of zooming, as zooming the bottom of the screen pushes the phone under the title zone.
+- **End card**: everything centred and stacked: icon, wordmark, Latin name, tagline, sub-line, badges.
