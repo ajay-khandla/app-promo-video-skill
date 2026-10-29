@@ -419,7 +419,8 @@ def build_captions(caps, bottom=52, size=44):
 # =====================================================================================
 # index
 # =====================================================================================
-def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, music=None, music_volume=0.14):
+def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, music=None, music_volume=0.14,
+                music_start=0.0, music_media_start=0.0, music_lane=None, music_fade_out=2.0):
     """Root composition: scene hosts, captions host, voiceover, optional music bed and SFX.
     sfx = [(id, file in assets/sfx/, abs_time, volume)]; each gets its own track.
     A mono voiceover at -16 LUFS measures ~3 LU louder once rendered to stereo: vo_volume 0.85 lands the mix near -14.5."""
@@ -430,8 +431,15 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
     sfx_html = "\n".join(
         f'      <audio id="{i}" class="clip" src="assets/sfx/{f}" data-start="{t}" data-track-index="{11 + n}" data-volume="{v}"></audio>'
         for n, (i, f, t, v) in enumerate(sfx))
-    music_html = (f'      <audio id="music" class="clip" src="{music}" data-start="0" data-duration="{TOTAL}" data-track-index="9" '
-                  f'data-volume="{music_volume}" data-fade-out="2"></audio>') if music else ""
+    # music: enter on a bar line (music_start on the film, music_media_start into the track), duck with a volume lane
+    # [(t, v), ...] in clip seconds; without a lane the bed sits at music_volume throughout
+    lane = ""
+    if music_lane:
+        pts = ",".join(f'{{&quot;t&quot;:{t},&quot;v&quot;:{v}}}' for t, v in music_lane)
+        lane = f' data-automation="{{&quot;version&quot;:1,&quot;lanes&quot;:[{{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{pts}]}}]}}"'
+    music_html = (f'      <audio id="music" class="clip" src="{music}" data-start="{music_start}" data-media-start="{music_media_start}" '
+                  f'data-duration="{r(TOTAL - music_start)}" data-track-index="9" data-volume="{1 if music_lane else music_volume}" '
+                  f'data-fade-out="{music_fade_out}"{lane}></audio>') if music else ""
     font_faces = "\n".join(
         f"      @font-face {{ font-family:'{fam}'; src:url('assets/fonts/{file}'); font-weight:{wt}; }}" for fam, file, wt in FONTS)
     vars_ = json.dumps([

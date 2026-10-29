@@ -235,5 +235,10 @@ if __name__ == "__main__":
     for f in (build_v1, build_v2, build_v3, build_v4, build_v5):
         f()
     K.build_captions([(V(a), V(b), txt) for a, b, txt in CAPS_MASTER], bottom=H - 505, size=46)
-    K.build_index(sfx=SFX, vo_volume=0.85)
+    # "Fretless" by Kevin MacLeod (incompetech.com), CC BY 4.0. Enters on a bar line with the reveal (v2),
+    # ducked under the voice, lifts after the last word for the end card.
+    m0 = B[1]
+    last_word = V(118.76) - m0
+    K.build_index(sfx=SFX, vo_volume=0.85, music="assets/audio/music-fretless.mp3", music_start=m0, music_media_start=16.8,
+                  music_lane=[(0, 0), (0.35, 0.17), (round(last_word, 2), 0.17), (round(last_word + 0.7, 2), 0.42)], music_fade_out=1.4)
     print("built", len(SCENES), "scenes, total", TOTAL)

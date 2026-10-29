@@ -500,5 +500,8 @@ if __name__ == "__main__":
     for f in (build_s1, build_s2, build_s3, build_s4, build_s5, build_s6, build_s7, build_s8, build_s9, build_s10, build_s11):
         f()
     K.build_captions(CAPS)
-    K.build_index(sfx=SFX, vo_volume=0.85)
+    # "Fretless" by Kevin MacLeod (incompetech.com), CC BY 4.0: enters on a bar line with the reveal (12.3 s),
+    # ducked under the voice, lifts after the last word (118.76 s) for the end card.
+    K.build_index(sfx=SFX, vo_volume=0.85, music="assets/audio/music-fretless.mp3", music_start=12.3, music_media_start=16.8,
+                  music_lane=[(0, 0), (0.35, 0.17), (106.46, 0.17), (107.16, 0.42)], music_fade_out=1.6)
     print("built", len(SCENES), "scenes + captions + index")

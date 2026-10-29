@@ -106,12 +106,14 @@ skills/app-promo-video/
     lessons.md                 lint errors, visual bugs and environment traps already met, with fixes
     reference-review.md        take a reference video's grammar (not its content) in ~6 images
     app-capture.md             build the app for the simulator, record real flows, cut them to the voice
+    music-and-export.md        pick and place a music bed (licence, bar-line entry, ducking), 4K export
   scripts/
     transcribe_clips.sh        word timings for every clip (multilingual Whisper via `hyperframes transcribe`)
     tighten_voiceover.py       join clips, cap pauses, remap word times → voiceover.wav + timing.json
     grid_sheets.sh             gridded contact sheets for reading zoom regions off screenshots
     ref_review.py              low-token review of a reference video: cuts, gridded contact sheets, motion strips
     fetch_ref.sh               download a YouTube/other reference at ≤720p (yt-dlp), for review only
+    find_music.py              free commercial-use music (Incompetech CC BY, Openverse CC0/BY) and its beat grid
     phone_kit.py               the scene generator (camera, screens, taps, outlines, titles, numbers, lists,
                                transitions, captions, root composition)
   templates/
