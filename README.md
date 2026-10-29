@@ -23,6 +23,7 @@ script + brand ──► SPEC.md (one line per shot, anchored to a spoken word)
 - **The motion matches the app.** Opening a new screen uses the iOS push transition, a change on the same screen crossfades, and a tap shows as a press highlight. There are no click rings and no invented UI.
 - **Titles have their own space.** They sit in a left-hand zone that the phone never enters.
 - **Captions in the voice's language.** They use the script's wording, timed to what is actually said, and drop out where the same words are already a title.
+- **Results lift out.** Each feature ends on one result moment: the real card (an amount, a balance) lifts out of the phone with a check badge while the number counts up. A brand-coloured shape sweeps across between worlds, and a finger dot shows every tap.
 - **Transitions have a cause.** There are 3–5 kinds per film: whip, zoom-through a tapped tile into a colour flood, carry, iris from a tap, dip, and a flood into the end card.
 - **The end card:** the phone shrinks into the app icon, the wordmark and tagline land in time with the voice, then the official App Store / Google Play badges appear.
 
@@ -146,6 +147,7 @@ sc.screen("owed", 37.0, 44.65, enter="push")          # real screenshot, iOS pus
 sc.open_on((48, 420, 1107, 210))                      # open on the full phone, then zoom in
 sc.cam_to(38.55, cam(48, 420, 1107, 210))             # frame a region (screenshot px)
 sc.ol(39.1, (90, 450, 495, 165))                      # outline lands on "लेना"
+sc.lift("owed", 38.95, 42.5, (48, 420, 1107, 210))    # the result card lifts out of the phone, check badge
 sc.amount("s4-a1", "लेना", "₹1,19,250", C["green"], 39.35, 42.6)
 sc.write(phone_stage(sc))
 

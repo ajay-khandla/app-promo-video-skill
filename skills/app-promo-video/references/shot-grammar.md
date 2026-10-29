@@ -30,6 +30,13 @@ Numbers are for a 1920×1080 canvas at 30 fps with 1206×2622 iPhone screenshots
 - **Numbers**: label 48 px + value 96–150 px in the display face, in the colour the app uses for that kind of number (income green, expense red/clay, due red); lands on the word, holds ≥ 0.5 s + 0.3 s/word (the payoff ≥ 1.4 s).
 - **Lists that grow on the words** ("Spraying • Irrigation • Fertiliser"): one line per spoken word; vary the entrance between scenes (blur-in vs grey→ink) so it doesn't read as a template.
 
+## Result moments (from the Groundswell / Property Toolbox reference review)
+
+- **Lift**: once per feature, the result the voice names (an amount, a balance, a status card) lifts out of the phone: `sc.lift(key, t_in, t_out, rect, k=2.2)`. The real screenshot region is re-drawn sharp at k×, rises from its place in the phone to beside it (never into the title zone), holds while it is spoken, and settles back. The camera goes to the full phone first, by itself. A brand-green check badge pops on its corner (`check=True`).
+- **Count-up**: the matching left-zone number counts up to the real value in 0.6 s with Indian digit grouping (`amount(..., count=True)`, the default).
+- **Show the tap**: every `tap()` has a soft finger-tip dot that arrives 0.3 s early and presses with the highlight. It is a filled dot, not a ring.
+- **One accent word per title**: `title(..., accent=("याद",))` in brand green, or clay for a problem word.
+
 ## Transitions (use 3–5 kinds, each caused by something on screen)
 
 | Kind | Kit | Use |
@@ -39,6 +46,7 @@ Numbers are for a 1920×1080 canvas at 30 fps with 1206×2622 iPhone screenshots
 | Carry | same phone continues, camera to zoom 1 at the seam | adjacent features |
 | Iris from the tap | next host starts 0.35 s early (overlap in `SCENES`), root transparent, `clip-path: circle()` from the tap point | a button that opens a new section |
 | Dip | `dip()` | a hard turn |
+| Brand sweep | `sweep_out(brand)` at the end of one scene + `sweep_in(brand)` at the start of the next: a giant rounded brand shape crosses the frame diagonally (0.45 s in / 0.5 s out) | a change of world (prop world → app, feature group → feature group, last scene → end card) |
 | Colour flood into the end card | `flood(brand, t, 0.4, 0, 1)` | the last seam |
 
 ## Captions

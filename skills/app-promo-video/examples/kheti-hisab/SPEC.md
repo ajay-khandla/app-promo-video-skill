@@ -18,6 +18,8 @@ MOTION:  - Camera = one wrapper per scene: `scale` + `x/y` with origin 0 0. Move
          - Focus outline: one marigold 2.2 px stroke per scene that travels from target to target (0.35 s `expo.out`).
          - Titles land and hold dead still. Entrances vary: per-word blur 6 px → 0 at 0.067 s stagger; per-word grey → ink; whole-line blur 8 → 0. Amounts land with blur 10 → 0 and y 24 → 0 in 0.3 s `expo.out`. Exits are blur out in 0.18 s.
 
+         - From REFERENCE.md (2026-10-29): every scene opens on the full phone, then zooms; one result per feature lifts out of the phone (0.5 s expo.out up, 0.35 s power2.in back, check badge 0.3 s back.out) while its number counts up (0.6 s); a finger dot leads every tap by 0.3 s; brand-green sweeps at 11.85, 77.6 and 108.95.
+
 SHOTS (absolute seconds; anchor word in quotes):
   S1  0.0–12.3  Desk world. The camera drifts over the notebook: "बीज" line circled in red (1.0), the "खाद" bill slip slides in (2.0), "मंडी" line (5.5). Pull back to the whole desk at 8.6. Title "खेती का हिसाब इतना मुश्किल क्यों?" lands at 9.0. Notebook whips off left at 11.85.
   S2 12.3–22.6  The phone rises (home screen). "ये है Kheti Hisab" (14.8): phone moves right, icon + "खेती हिसाब" + "Kheti Hisab" land left. "डिजिटल हिसाब किताब" (17.1): punch to the season card. Tagline at 19.5. Punch to quick actions; tap the खर्च tile (21.4) and zoom through into a clay flood.
@@ -32,6 +34,7 @@ SHOTS (absolute seconds; anchor word in quotes):
   S11 109.0–121.5 Green world. The phone (home screen) sits right; on "डाउनलोड" (113.0) it shrinks into the app icon, which lands left of centre. Wordmark "खेती हिसाब" wipes in (113.9), "Kheti Hisab" (114.2), tagline "हर किसान का अपना हिसाब" grey→cream on the words (115.3–118.0), "अपनी खेती • अपना रिकॉर्ड • अपना हिसाब" (117.2), badges rise (117.6). Hold to 121.5.
   CAPTIONS: Hindi, one group at a time, bottom 56 px on a cream scrim sized to the text. Off where the same words are a title (S2 tagline, S8 last line, S11 from 115.3).
 
+LIFTS:   27.6 ₹6,400 (S3) · 38.95 लेना/देना (S4) · 50.55 बकाया (S5) · 72.7 ₹82,000 लेने हैं (S7) · 82.4 offline card (S8) · 107.55 profit card (S10).
 BANNED:  dark void; glow, particles, gradients as decoration; serif display or mono labels; pill chips; three cards in a row; a title over a dimmed screenshot; the logo docked in a corner; click rings; floating or breathing loops; drawn or invented app UI (every screen is a real screenshot); invented numbers (all amounts come from the screens); phone UI tilted in 3D.
 
 QA:      1.0 (bills circled, not empty frame), 9.5 (title readable over the desk), 15.5 (lockup + phone), 23.5 (outline on बीज), 39.6 (लेना amount readable), 47.5 (हाजिर outlined), 58.5 (list + outline), 72.0 (Instalments), 83.0 (Works Offline + offline card), 95.8 (new phone), 107.9 (profit payoff), 119 (end card complete). Phone width 360 px: every amount readable.

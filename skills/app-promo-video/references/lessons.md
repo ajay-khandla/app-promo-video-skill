@@ -25,6 +25,7 @@
 - **Scenes opening already zoomed in** read as a jump cut into a detail; viewers asked for the full screen first. Open with `open_on(rect)`, and make `whip_in()` land on the full phone (it uses `open_state`), or the camera snaps back out when the zoom starts.
 - **Frame 0 of the render showing end states** (slips already placed, circle already drawn) although preview snapshots looked right: the renderer's first frame can show the authored CSS before GSAP's immediate from-states apply. Give every element that animates in later its starting state in CSS too (`opacity:0`, `stroke-dashoffset`, `clip-path`), and include `opacity` in its tween. Always look at frame 0 of the MP4 — it is the thumbnail.
 - **Text wrapping into the next element**: a 2-line Hindi title pushed into the Pro tag under it. Place the next element below two lines, or check width.
+- **Finger dots missing**: `phone_stage()` moved tap elements into the phone by matching `class="tap"` exactly, so `class="tap finger"` stayed on the stage at screen coordinates. Match the prefix `class="tap`.
 - **Prop camera aimed at the wrong place**: compute the camera from the prop's own coordinates (`ty = targetY − scale × propY`) instead of guessing.
 
 ## Sound

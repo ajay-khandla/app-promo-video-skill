@@ -117,7 +117,7 @@ def build_s1():
     #s1-cream {{ position:absolute; inset:0; background:{C['ground']}; opacity:0; }}
     """)
     stage = (f'<div id="s1-desk"></div><div id="s1-cam" data-layout-allow-overflow data-layout-allow-overlap data-layout-ignore><div id="s1-paper">{notes}{strikes}{circle}{query}</div>'
-             f'{slip1}{slip2}</div><div id="s1-title">{sc.words_html("खेती का हिसाब इतना मुश्किल क्यों?")}</div><div id="s1-cream"></div>')
+             f'{slip1}{slip2}</div><div id="s1-title">{sc.words_html("खेती का हिसाब इतना मुश्किल क्यों?", accent=("मुश्किल",), accent_color=C["clay"])}</div><div id="s1-cream"></div>')
     # camera: paper coordinates -> frame
     sc.js.append("""
     const cam = '#s1-cam';
@@ -133,8 +133,10 @@ def build_s1():
     tl.fromTo('#s1-title .w', {opacity:0, filter:'blur(6px)'}, {opacity:1, filter:'blur(0px)', duration:0.13, stagger:0.067, ease:'power2.out'}, 9.0);
     tl.fromTo('#s1-title', {opacity:1, filter:'blur(0px)'}, {opacity:0, filter:'blur(8px)', duration:0.18, ease:'power2.in', immediateRender:false}, 11.62);
     tl.fromTo(cam, {x:600, y:345, scale:0.5, filter:'blur(0px)'}, {x:-1500, y:345, scale:0.5, filter:'blur(18px)', duration:0.4, ease:'power3.in', immediateRender:false}, 11.85);
-    tl.fromTo('#s1-cream', {opacity:0}, {opacity:1, duration:0.3, ease:'power2.inOut'}, 11.95);
     """)
+    sc.sweep_out(C["green"])
+    stage += "".join(h for h in sc.html)
+    sc.html = []
     sc.write(stage, ground=C["desk"])
 
 
@@ -156,6 +158,7 @@ def build_s2():
     z = st["scale"]
     sc.cam_to(21.75, {"x": st["x"] - 4.0 * z * (OX + S * 480), "y": st["y"] - 4.0 * z * (OY + S * 1350), "scale": z * 5}, dur=0.45, ease="power3.in")
     sc.flood(C["clay"], 22.05, 0.3, 0, 1)
+    sc.sweep_in(C["green"])
     sc.html.append('<img id="s2-icon" class="icon" src="assets/brand/app-icon.png" alt="" style="left:120px;top:250px" />')
     sc.js.append(f"tl.fromTo('#s2-icon', {{opacity:0, scale:0.6}}, {{opacity:1, scale:1, duration:0.45, ease:'expo.out'}}, {sc.t(14.85)});"
                  f"tl.fromTo('#s2-icon', {{opacity:1}}, {{opacity:0, duration:0.18, immediateRender:false}}, {sc.t(21.5)});")
@@ -183,7 +186,7 @@ def build_s3():
     sc.tap(25.2, 435, 1305, 270, 435)
     sc.ol(25.4)
     sc.cam_to(25.5, cam(45, 560, 1110, 760), dur=0.6)
-    sc.ol(27.6, (60, 1110, 1080, 201))
+    sc.lift("expfilled", 27.6, 29.2, (60, 1110, 1080, 201), k=2.1)
     sc.cam_to(29.3, cam(45, 360, 1110, 420), dur=0.6)
     sc.ol(29.7, (45, 375, 1110, 150))
     sc.ol(30.6)
@@ -215,10 +218,7 @@ def build_s4():
     sc.ol(35.8, (45, 1140, 1065, 90))
     sc.ol(36.9)
     sc.cam_to(36.95, BASE, dur=0.6)
-    sc.cam_to(38.55, cam(48, 420, 1107, 210), dur=0.6)
-    sc.ol(39.1, (90, 450, 495, 165))
-    sc.ol(41.1, (615, 450, 510, 165))
-    sc.ol(42.55)
+    sc.lift("owed", 38.95, 42.5, (48, 420, 1107, 210), k=2.3)
     sc.cam_to(42.55, cam(48, 1240, 1110, 950), dur=0.6)
     sc.cam_to(44.0, BASE, dur=0.6)
     sc.amount("s4-a1", "लेना", "₹1,19,250", C["green"], 39.35, 42.6, y=250)
@@ -242,9 +242,8 @@ def build_s5():
     sc.ol(47.15, (66, 804, 354, 111))
     sc.ol(49.1, (450, 804, 330, 111))
     sc.ol(50.05)
-    sc.cam_to(50.15, cam(48, 465, 1107, 210), dur=0.6)
-    sc.ol(50.75, (48, 465, 1107, 210))
-    sc.ol(51.7)
+    sc.cam_to(50.0, BASE, dur=0.5)
+    sc.lift("calendar", 50.55, 51.75, (48, 465, 1107, 210), k=2.3)
     sc.amount("s5-a1", "बकाया", "₹2,400", C["due"], 50.65, 51.75, y=330)
     sc.cam_to(51.75, cam(48, 760, 1107, 1260), dur=0.65)
     sc.items("s5-l", [("Attendance", 52.2), ("मजदूरी", 53.35), ("बाकी भुगतान", 51.13 + 3.4)], 57.0,
@@ -281,7 +280,7 @@ def build_s6():
                    '<span class="pro-t">नया काम और रिमाइंडर</span></div>')
     t = sc.t(65.0)
     sc.js.append(f"tl.fromTo('#s6-pro', {{opacity:0, filter:'blur(8px)'}}, {{opacity:1, filter:'blur(0px)', duration:0.2}}, {t});")
-    sc.title("s6-t", "खेत का काम भी याद रखो", 64.6, 68.3, y=250, size=84)
+    sc.title("s6-t", "खेत का काम भी याद रखो", 64.6, 68.3, y=250, size=84, accent=("याद",))
     sc.whip_out()
     stage = phone_stage(sc)
     body = "\n".join(sc.html)
@@ -302,14 +301,10 @@ def build_s7():
     sc.ol(70.6, (60, 1560, 1095, 90))
     sc.ol(71.7)
     sc.cam_to(71.75, cam(48, 600, 1116, 720), dur=0.55)
-    sc.ol(72.05, (48, 900, 1116, 195))
-    sc.ol(72.7, (435, 615, 345, 180))
-    sc.ol(74.4)
-    sc.cam_to(74.5, BASE, dur=0.6)
+    sc.lift("payments", 72.7, 74.45, (48, 615, 1116, 180), k=2.3)
     sc.items("s7-l", [("Contract", 68.86), ("Advance", 70.57), ("Instalments", 71.76), ("Balance", 72.7)], 77.7,
              y=250, size=78, font="display", style="grey")
-    sc.html.append('<div id="s7-dip" class="flood" style="background:#000"></div>')
-    sc.js.append(f"tl.fromTo('#s7-dip', {{opacity:0}}, {{opacity:0.4, duration:0.1}}, {r(sc.dur-0.1)});")
+    sc.sweep_out(C["green"])
     sc.write(phone_stage(sc))
 
 
@@ -320,14 +315,13 @@ def build_s8():
     sc = Scene("s8")
     sc.screen("exppending", 78.05, 81.25)
     sc.screen("offline", 81.0, 88.15, enter="push")
-    sc.open_on((45, 330, 1110, 980))
+    sc.open_on((45, 330, 1110, 980), hold=0.55)
+    sc.sweep_in(C["green"])
     sc.ol(79.5, (96, 1140, 1008, 90))
     sc.ol(80.6)
     sc.cam_to(80.5, BASE, dur=0.45)
     sc.tap(80.95, 45, 2175, 1110, 141)
-    sc.cam_to(81.3, cam(93, 420, 1032, 255), dur=0.6)
-    sc.ol(82.6, (93, 420, 1032, 255))
-    sc.ol(87.4)
+    sc.lift("offline", 82.4, 87.3, (93, 420, 1032, 255), k=2.2)
     bars = "".join(f'<div class="bar" id="s8-b{i}" style="left:{i*46}px;height:{40+i*34}px"></div>' for i in range(4))
     sc.html.append(f'<div id="s8-sig" class="sig" style="left:130px;top:160px">{bars}<div id="s8-x" class="sig-x">×</div></div>')
     for i in range(4):
@@ -381,7 +375,7 @@ def build_s9():
     zt = {"x": home_tiles["x"] - 4.0 * zh * (OX + S * 997), "y": home_tiles["y"] - 4.0 * zh * (OY + S * 1350), "scale": zh * 5}
     sc.js.append(f"tl.fromTo('#s9-camB', {json.dumps(home_tiles)}, {{...{json.dumps(zt)}, duration:0.45, ease:'power3.in', immediateRender:false}}, {sc.t(98.8)});")
     sc.flood(C["ground"], 99.0, 0.25, 0, 1)
-    sc.title("s9-t2", "नया फोन • वही हिसाब", 94.7, 98.0, y=330, size=70)
+    sc.title("s9-t2", "नया फोन • वही हिसाब", 94.7, 98.0, y=330, size=70, accent=("वही", "हिसाब"))
     sc.css.append("#s9-camB { opacity:0; }")
     stage = phone_stage(sc) + f'<div id="s9-camB" class="cam" data-layout-allow-overflow>{phone_b}</div>'
     sc.write(stage)
@@ -405,13 +399,13 @@ def build_s10():
     sc.ol(107.2)
     sc.amount("s10-a1", "Income", "₹2,92,250", C["green"], 103.7, 107.4, y=170, size=96)
     sc.amount("s10-a2", "Expense", "₹1,09,682", C["clay"], 105.35, 107.4, y=420, size=96)
-    sc.cam_to(107.3, cam(330, 500, 540, 160, zmax=3.0), dur=0.55)
+    sc.lift("pl", 107.55, 109.1, (54, 405, 1101, 540), k=2.2)
     sc.amount("s10-a3", "Profit", "₹1,82,568", C["green"], 107.7, 109.25, y=300, size=150)
     sc.html.append('<div id="s10-ul" class="ul" style="left:124px;top:560px"></div>')
     sc.css.append("#s10-ul { opacity:0; }")
     sc.js.append(f"tl.fromTo('#s10-ul', {{scaleX:0, opacity:1}}, {{scaleX:1, opacity:1, duration:0.45, ease:'expo.out'}}, {sc.t(107.95)});"
                  f"tl.fromTo('#s10-ul', {{opacity:1}}, {{opacity:0, duration:0.15, immediateRender:false}}, {sc.t(109.1)});")
-    sc.flood(C["green"], 109.0, 0.4, 0, 1)
+    sc.sweep_out(C["green"])
     sc.css.append("#s10-a1 .amt-l, #s10-a2 .amt-l, #s10-a3 .amt-l { font-family:var(--font-display); }")
     sc.write(phone_stage(sc))
 

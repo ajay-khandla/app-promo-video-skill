@@ -11,7 +11,7 @@ A workflow on top of the HyperFrames skills for one job: a 30 s–2 min trailer 
 
 ## The method in one paragraph
 
-The voiceover is the clock. Each sentence gets the real screen that proves it, shown in a phone frame on a brand-coloured stage; the camera zooms into the exact region (in screenshot pixels) the voice names, so text is ≥28 px on a phone, and a focus outline, a big number or a short title lands **on the spoken word**. Each scene opens on the full phone and only then zooms in. Navigation is an iOS push, state changes crossfade, taps are a press highlight (never click rings). Titles live in a left zone the phone never enters. Captions carry the voice; they drop out where the same words are a title. Every number on screen comes from a real screenshot.
+The voiceover is the clock. Each sentence gets the real screen that proves it, shown in a phone frame on a brand-coloured stage; the camera zooms into the exact region (in screenshot pixels) the voice names, so text is ≥28 px on a phone, and a focus outline, a big number or a short title lands **on the spoken word**. Each scene opens on the full phone and only then zooms in. Each feature ends on one result moment: its real UI card lifts out of the phone with a check badge while the number counts up. Navigation is an iOS push, state changes crossfade, taps are a press highlight (never click rings). Titles live in a left zone the phone never enters. Captions carry the voice; they drop out where the same words are a title. Every number on screen comes from a real screenshot.
 
 ## Work loop
 

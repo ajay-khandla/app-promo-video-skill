@@ -116,6 +116,8 @@ class Scene:
         self.ol_state = None
         self.ol_html = []
         self.n_ol = 0
+        self.n_lift = 0
+        self.lift_html = []
 
     def t(self, abs_t):
         return r(abs_t - self.start)
@@ -176,13 +178,19 @@ class Scene:
                 f'<div class="screen">{imgs}{extra}</div></div>')
 
     def tap(self, abs_t, rx, ry, rw, rh):
-        """iOS-style press highlight over a screenshot region. No click rings."""
-        n_taps = sum('class="tap"' in h for h in self.html)
+        n_taps = sum('class="tap"' in h for h in self.html)  # counts highlights only, not finger dots
         tid = f"{self.id}-tap{n_taps}"
         self.html.append(f'<div id="{tid}" class="tap" style="left:{r(rx*S)}px;top:{r(ry*S)}px;width:{r(rw*S)}px;height:{r(rh*S)}px"></div>')
         t = self.t(abs_t)
         self.js.append(f"tl.fromTo('#{tid}', {{opacity:0}}, {{opacity:1, duration:0.06}}, {t});"
                        f"tl.fromTo('#{tid}', {{opacity:1}}, {{opacity:0, duration:0.2, immediateRender:false}}, {r(t+0.12)});")
+        # finger-tip dot: arrives 0.3 s early, presses with the highlight (sized to stay ~46 px on screen at the current zoom)
+        d = r(46 / max(1.0, self.cam_state["scale"]))
+        fx, fy = r((rx + rw / 2) * S - d / 2), r((ry + rh / 2) * S - d / 2)
+        self.html.append(f'<div id="{tid}f" class="tap finger" style="left:{fx}px;top:{fy}px;width:{d}px;height:{d}px"></div>')
+        self.js.append(f"tl.fromTo('#{tid}f', {{opacity:0, scale:1.5}}, {{opacity:1, scale:1, duration:0.25, ease:'power2.out'}}, {r(max(0, t-0.35))});"
+                       f"tl.fromTo('#{tid}f', {{scale:1}}, {{scale:0.8, duration:0.08, ease:'power2.in', immediateRender:false}}, {t});"
+                       f"tl.fromTo('#{tid}f', {{scale:0.8, opacity:1}}, {{scale:1, opacity:0, duration:0.3, ease:'power2.out', immediateRender:false}}, {r(t+0.1)});")
 
     # ---- focus outline ----------------------------------------------------------
     def ol(self, abs_t, rect=None):
@@ -202,16 +210,18 @@ class Scene:
         self.ol_state = oid
 
     # ---- left-zone text -------------------------------------------------------
-    def words_html(self, text, cls="w"):
-        return " ".join(f'<span class="{cls}">{w}</span>' for w in text.split(" "))
+    def words_html(self, text, cls="w", accent=(), accent_color=None):
+        accent_color = accent_color or C["brand"]
+        return " ".join(f'<span class="{cls}"' + (f' style="color:{accent_color}"' if w in accent else "") + f'>{w}</span>'
+                        for w in text.split(" "))
 
     def title(self, tid, text, abs_in, abs_out, x=120, y=380, size=84, color=None, style="blur",
-              font="main", weight=800, width=760, extra_css=""):
+              font="main", weight=800, width=760, extra_css="", accent=(), accent_color=None):
         """A title in the left zone. style: blur (per word) | grey (per word, grey to ink) | line (whole line)."""
         color = color or C["ink"]
         self.html.append(
             f'<div id="{tid}" class="ttl" style="left:{x}px;top:{y}px;width:{width}px;font-family:{font_family(font)};'
-            f'font-weight:{weight};font-size:{size}px;color:{color};{extra_css}">{self.words_html(text)}</div>')
+            f'font-weight:{weight};font-size:{size}px;color:{color};{extra_css}">{self.words_html(text, accent=accent, accent_color=accent_color)}</div>')
         t, to = self.t(abs_in), self.t(abs_out) if abs_out else None
         sel = f"#{tid} .w"
         if style == "blur":
@@ -225,8 +235,7 @@ class Scene:
         if to is not None:
             self.js.append(f"tl.fromTo('#{tid}', {{opacity:1, filter:'blur(0px)'}}, {{opacity:0, filter:'blur(8px)', duration:0.18, ease:'power2.in', immediateRender:false}}, {r(to-0.18)});")
 
-    def amount(self, tid, label, value, color, abs_in, abs_out, x=120, y=360, size=132):
-        """A big number with a small label, landing on the word that says it."""
+    def amount(self, tid, label, value, color, abs_in, abs_out, x=120, y=360, size=132, count=True):
         self.html.append(
             f'<div id="{tid}" class="amt" style="left:{x}px;top:{y}px">'
             f'<div class="amt-l">{label}</div><div class="amt-v" style="color:{color};font-size:{size}px">{value}</div></div>')
@@ -235,6 +244,12 @@ class Scene:
                        f"tl.fromTo('#{tid} .amt-v', {{opacity:0, y:24, filter:'blur(10px)'}}, {{opacity:1, y:0, filter:'blur(0px)', duration:0.3, ease:'expo.out'}}, {r(t+0.08)});"
                        f"tl.set('#{tid}', {{opacity:1}}, {t});"
                        f"tl.fromTo('#{tid}', {{opacity:1, filter:'blur(0px)'}}, {{opacity:0, filter:'blur(8px)', duration:0.18, ease:'power2.in', immediateRender:false}}, {r(to-0.18)});")
+        if count:
+            n = int("".join(ch for ch in value if ch.isdigit()))
+            prefix = value[:next(i for i, ch in enumerate(value) if ch.isdigit())]
+            self.js.append(f"(() => {{ const el = document.querySelector('#{tid} .amt-v'); const o = {{v:0}};"
+                           f" tl.fromTo(o, {{v:0}}, {{v:{n}, duration:0.6, ease:'power2.out',"
+                           f" onUpdate:() => {{ el.textContent = '{prefix}' + Math.round(o.v).toLocaleString('en-IN'); }} }}, {r(t+0.08)}); }})();")
 
     def items(self, lid, entries, abs_out, x=120, y=300, size=64, gap=1.45, style="blur", font="display", color=None):
         """A list that grows one line per spoken word: entries = [(text, abs_time), ...]."""
@@ -250,6 +265,42 @@ class Scene:
                 self.js.append(f"tl.fromTo('#{lid}-{i}', {{opacity:0, color:'rgba(27,38,32,0.16)'}}, {{opacity:1, color:'{color}', duration:0.28, ease:'power1.out'}}, {t});")
         if abs_out:
             self.js.append(f"tl.fromTo('#{lid}', {{opacity:1, filter:'blur(0px)'}}, {{opacity:0, filter:'blur(8px)', duration:0.18, ease:'power2.in', immediateRender:false}}, {r(self.t(abs_out)-0.18)});")
+
+    def lift(self, key, abs_in, abs_out, rect, k=2.2, check=True):
+        """Lift a real screenshot region out of the phone: re-drawn crisp at k x, rising beside the phone,
+        held while the voice names it, then settling back. Moves the camera to the full phone first."""
+        if self.cam_state != BASE:
+            self.cam_to(abs_in - 0.55, BASE, dur=0.5)
+        x, y, w, h = rect
+        lid = f"{self.id}-lift{self.n_lift}"
+        self.n_lift += 1
+        bw, bh = w * S * k, h * S * k
+        cx0, cy0 = OX + (x + w / 2) * S, OY + (y + h / 2) * S
+        tx = min(max(cx0, TITLE_ZONE_RIGHT + 20 + bw / 2), W - 50 - bw / 2)
+        ty = min(max(cy0, 70 + bh / 2), 900 - bh / 2)
+        badge = '<div class="lift-ok">✓</div>' if check else ""
+        self.lift_html.append(
+            f'<div id="{lid}" class="lift" style="left:{r(cx0-bw/2)}px;top:{r(cy0-bh/2)}px;width:{r(bw)}px;height:{r(bh)}px;'
+            f'background-image:url(assets/screens/{SHOT[key]});background-size:{r(SW*k)}px {r(SH*k)}px;'
+            f'background-position:{r(-x*S*k)}px {r(-y*S*k)}px">{badge}</div>')
+        t, to = self.t(abs_in), self.t(abs_out)
+        self.js.append(
+            f"tl.fromTo('#{lid}', {{opacity:0, scale:{r(1/k)}, x:0, y:0}}, {{opacity:1, duration:0.08}}, {t});"
+            f"tl.fromTo('#{lid}', {{scale:{r(1/k)}, x:0, y:0, filter:'blur(0px)'}}, {{scale:1, x:{r(tx-cx0)}, y:{r(ty-cy0)}, duration:0.5, ease:'expo.out', immediateRender:false}}, {t});"
+            f"tl.fromTo('#{lid}', {{scale:1, x:{r(tx-cx0)}, y:{r(ty-cy0)}}}, {{scale:{r(1/k)}, x:0, y:0, duration:0.35, ease:'power2.in', immediateRender:false}}, {r(to-0.4)});"
+            f"tl.fromTo('#{lid}', {{opacity:1}}, {{opacity:0, duration:0.05, immediateRender:false}}, {r(to-0.05)});")
+        if check:
+            self.js.append(f"tl.fromTo('#{lid} .lift-ok', {{scale:0, opacity:0}}, {{scale:1, opacity:1, duration:0.3, ease:'back.out(2)'}}, {r(t+0.45)});")
+
+    def sweep_out(self, color, dur=0.45):
+        """A giant rounded brand shape sweeps in from the bottom right and covers the frame at the scene's end."""
+        self.html.append(f'<div id="{self.id}-swo" class="sweep" style="background:{color};opacity:0"></div>')
+        self.js.append(f"tl.fromTo('#{self.id}-swo', {{x:2700, y:1500, opacity:1}}, {{x:0, y:0, opacity:1, duration:{dur}, ease:'power2.in'}}, {r(self.dur-dur)});")
+
+    def sweep_in(self, color, dur=0.5):
+        """The covering shape continues off to the top left, revealing this scene."""
+        self.html.append(f'<div id="{self.id}-swi" class="sweep" style="background:{color}"></div>')
+        self.js.append(f"tl.fromTo('#{self.id}-swi', {{x:0, y:0}}, {{x:-2700, y:-1500, duration:{dur}, ease:'power2.out'}}, 0);")
 
     # ---- transitions ------------------------------------------------------------
     def whip_in(self):
@@ -304,12 +355,12 @@ class Scene:
 
 def phone_stage(sc, extra_in_screen="", patch=True):
     """Camera wrapper with the light patch, the phone, its focus outlines and taps."""
-    taps = "".join(h for h in sc.html if 'class="tap"' in h)
-    sc.html = [h for h in sc.html if 'class="tap"' not in h]
+    taps = "".join(h for h in sc.html if 'class="tap' in h)
+    sc.html = [h for h in sc.html if 'class="tap' not in h]
     ol = "".join(sc.ol_html)
     patch_html = '<div class="patch"></div>' if patch else ""
     return (f'{patch_html}<div id="{sc.id}-cam" class="cam" data-layout-allow-overflow>'
-            f'{sc.phone_html(extra=taps + ol + extra_in_screen)}</div>')
+            f'{sc.phone_html(extra=taps + ol + extra_in_screen)}</div>' + "".join(sc.lift_html))
 
 
 # =====================================================================================
@@ -396,6 +447,14 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
       .screen > .shot {{ position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; }}
       .screen > .shot > img {{ position:absolute; left:0; top:0; width:100%; height:100%; display:block; }}
       .tap {{ position:absolute; background:rgba(27,38,32,0.14); border-radius:8px; opacity:0; z-index:40; }}
+      .finger {{ background:rgba(27,38,32,0.30); border:2px solid rgba(255,255,255,0.85); border-radius:50%; z-index:42;
+        box-shadow:0 4px 10px rgba(27,38,32,0.25); }}
+      .lift {{ position:absolute; border-radius:22px; opacity:0; z-index:45; background-repeat:no-repeat; background-color:#fff;
+        box-shadow:0 30px 70px rgba(27,38,32,0.28), 0 0 0 1px rgba(27,38,32,0.06); }}
+      .lift-ok {{ position:absolute; right:-22px; top:-22px; width:64px; height:64px; border-radius:50%; background:{C['brand']};
+        color:#fff; font-family:var(--font-display); font-weight:800; font-size:38px; line-height:64px; text-align:center; opacity:0;
+        box-shadow:0 8px 18px rgba(27,38,32,0.25); }}
+      .sweep {{ position:absolute; left:{960-1700}px; top:{540-1700}px; width:3400px; height:3400px; border-radius:50%; z-index:70; }}
       .ol {{ position:absolute; border:2.2px solid {C['accent']}; border-radius:9px; opacity:0; z-index:41;
         box-shadow:0 0 0 1px rgba(232,162,58,0.25); }}
       .ttl {{ position:absolute; line-height:1.25; opacity:0; }}
