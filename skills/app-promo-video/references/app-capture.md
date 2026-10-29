@@ -22,6 +22,12 @@ Driving the simulator:
 - Typed words show only after a space commits them: type `"Farm "` with a trailing space. Numbers appear on the second attempt more often than the first: check the field before moving on.
 - Do a dry run of the whole flow first to learn every tap target; the order of pickers can change after the first use (recently used items move first).
 
+## Demo data that doesn't look empty
+
+- A fresh book makes lists and totals look empty. With the app terminated, back up its SQLite, then insert parties, seasons and entries the way the app's own repository writes them (read its insert code: dates at local start of day, a payment row for paid entries, base quantities). Run `PRAGMA integrity_check` and relaunch. Keep the seeder script in `inputs/<slug>/` so the next video can reuse it.
+- Things the voice shows, like a bill photo, can be demo media: render a simple page with headless Chrome and `xcrun simctl addmedia` it into Photos. Then attach it in the app.
+- Non-Latin text (Hindi) can't be typed with `simctl`'s text input; it arrives garbled. Use `printf '…' | LANG=en_US.UTF-8 xcrun simctl pbcopy <udid>`, long-press the field and tap Paste. Cut the Paste bubble and the permission dialog out of the clip.
+
 ## Record
 
 - Clean status bar: `xcrun simctl status_bar <udid> override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100`.
@@ -30,6 +36,10 @@ Driving the simulator:
 - Take your time between steps (check each one); the pauses are cut later.
 
 ## Cut to the voice
+
+For a tutorial, record one long take of the whole flow. Then cut one clip per voice line with `scripts/cut_takes.py`: anchors `(film_t, take_t, play_s)` jump to each event on its spoken word, play the animation, and hold.
+
+The simulator writes variable-frame-rate video, so a seek lands on the next frame that changed, not on the time you asked for. Find event times with `fps=10,tblend=all_mode=difference,signalstats` (YAVG per frame), not by sampling seeks. Typing shows up as YAVG of only about 0.1–0.2.
 
 1. Find each event: big screen changes with ffmpeg scene detection on a 200-px copy; small ones (digits appearing) with a frame difference on a crop of that field at 10 fps.
 2. Build one clip per scene with exact holds and plays (`hold` a frame for N s, `play` t0–t1), concatenated at 30 fps, so each event lands on its word. A scene's clip runs from the moment it first shows to the scene's end.

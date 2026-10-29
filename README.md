@@ -114,6 +114,7 @@ skills/app-promo-video/
     ref_review.py              low-token review of a reference video: cuts, gridded contact sheets, motion strips
     fetch_ref.sh               download a YouTube/other reference at ≤720p (yt-dlp), for review only
     find_music.py              free commercial-use music (Incompetech CC BY, Openverse CC0/BY) and its beat grid
+    cut_takes.py               cut one long simulator take into per-scene clips, each tap landing on its spoken word
     phone_kit.py               the scene generator (camera, screens, taps, outlines, titles, numbers, lists,
                                transitions, captions, root composition)
   templates/
