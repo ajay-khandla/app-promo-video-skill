@@ -32,6 +32,12 @@
 - A mono voiceover measured alone reads ~3 LU quieter than the rendered stereo mix. Normalize the voice with two-pass `loudnorm` (I=-16, TP=-1.5) — `normalize-audio` only changes gain and would clip — then set `vo_volume` ≈ 0.85 so the MP4 lands near -15 LUFS. Measure the MP4 with `ffmpeg -af ebur128=peak=true`.
 - Check that normalizing didn't shift timing: compare `silencedetect` times before and after.
 
+## Capturing from the app
+- `rsync --exclude sync` also excluded `lib/data/sync`; exclude top-level folders as `/sync`.
+- A newer Flutter rejected the app's exact `intl` pin; relax it in the scratch copy only, never in the app repo.
+- Simulator input: the first tap/text after a screen change is sometimes dropped, and a typed word only shows after a space commits it.
+- `phone_html(left=PL)` as a default argument froze PL at import (0) in the kit; read module settings inside the function.
+
 ## Environment
 - macOS ships Python 3.9 (no backslashes inside f-string expressions) and bash 3.2 (no `${var,,}`).
 - Homebrew ffmpeg may lack `drawtext`; `grid_sheets.sh` uses `drawgrid` only.

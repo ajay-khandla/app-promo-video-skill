@@ -105,6 +105,7 @@ skills/app-promo-video/
     shot-grammar.md            stage, camera, screens, attention, transitions, captions, end card — in numbers
     lessons.md                 lint errors, visual bugs and environment traps already met, with fixes
     reference-review.md        take a reference video's grammar (not its content) in ~6 images
+    app-capture.md             build the app for the simulator, record real flows, cut them to the voice
   scripts/
     transcribe_clips.sh        word timings for every clip (multilingual Whisper via `hyperframes transcribe`)
     tighten_voiceover.py       join clips, cap pauses, remap word times → voiceover.wav + timing.json

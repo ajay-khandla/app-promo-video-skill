@@ -53,6 +53,11 @@ SHOTS = {
     "offline": "10-cloud-sync--10-state-offline.png",
     "synced": "10-cloud-sync--02-cloud-sync-up-to-date.png",
     "start": "13-onboarding--02-start.png",
+    # real recordings from the app (simulator) and stills taken from them — references/app-capture.md
+    "walk": "rec--expense-walk.mp4",
+    "offentry": "rec--offline-entry.mp4",
+    "exp6400": "rec--expense-6400.png",
+    "offhome": "rec--offline-home.png",
 }
 
 FONTS = [
@@ -173,9 +178,8 @@ def build_s2():
 # =====================================================================================
 def build_s3():
     sc = Scene("s3")
-    sc.screen("cat", 22.6, 25.62)
-    sc.screen("expfilled", 25.4, 31.75, enter="fade")
-    sc.screen("vendor", 31.55, 33.35, enter="fade")
+    sc.screen("cat", 22.6, 25.65)
+    sc.screen("walk", 25.4, 33.35, enter="fade")
     sc.open_on((45, 810, 1110, 1425))
     sc.flood(C["clay"], 22.6, 0.35, 1, 0)
     sc.ol(22.8, (435, 825, 270, 435))
@@ -186,14 +190,15 @@ def build_s3():
     sc.tap(25.2, 435, 1305, 270, 435)
     sc.ol(25.4)
     sc.cam_to(25.5, cam(45, 560, 1110, 760), dur=0.6)
-    sc.lift("expfilled", 27.6, 29.2, (60, 1110, 1080, 201), k=2.1)
-    sc.cam_to(29.3, cam(45, 360, 1110, 420), dur=0.6)
-    sc.ol(29.7, (45, 375, 1110, 150))
+    sc.tap(27.5, 60, 1110, 1080, 201)
+    sc.lift("exp6400", 28.3, 29.6, (60, 1110, 1080, 201), k=2.1)
+    sc.cam_to(29.65, cam(45, 360, 1110, 420), dur=0.6)
+    sc.ol(29.95, (45, 375, 1110, 150))
     sc.ol(30.6)
     sc.cam_to(30.6, BASE, dur=0.6)
     sc.tap(31.3, 45, 2175, 1110, 141)
-    sc.cam_to(31.7, cam(45, 2100, 1125, 390), dur=0.6)
-    sc.ol(32.3, (45, 2110, 1125, 370))
+    sc.cam_to(31.75, cam(54, 400, 1101, 470), dur=0.6)
+    sc.ol(32.3, (600, 630, 510, 170))
     sc.items("s3-l", [("खर्चा लिखो", 27.55), ("फसल से जोड़ो", 29.45), ("हिसाब साफ रखो", 31.45)], 33.0,
              y=330, size=78, font="main", style="blur")
     sc.css.append("#s3-l { font-weight:800; }")
@@ -313,15 +318,12 @@ def build_s7():
 # =====================================================================================
 def build_s8():
     sc = Scene("s8")
-    sc.screen("exppending", 78.05, 81.25)
-    sc.screen("offline", 81.0, 88.15, enter="push")
-    sc.open_on((45, 330, 1110, 980), hold=0.55)
+    sc.screen("offentry", 78.05, 88.15)
+    sc.open_on((800, 40, 350, 110), hold=0.55)
     sc.sweep_in(C["green"])
-    sc.ol(79.5, (96, 1140, 1008, 90))
-    sc.ol(80.6)
-    sc.cam_to(80.5, BASE, dur=0.45)
-    sc.tap(80.95, 45, 2175, 1110, 141)
-    sc.lift("offline", 82.4, 87.3, (93, 420, 1032, 255), k=2.2)
+    sc.cam_to(80.2, BASE, dur=0.5)
+    sc.tap(80.85, 45, 2175, 1110, 141)
+    sc.lift("offhome", 82.4, 87.3, (600, 630, 510, 170), k=2.4)
     bars = "".join(f'<div class="bar" id="s8-b{i}" style="left:{i*46}px;height:{40+i*34}px"></div>' for i in range(4))
     sc.html.append(f'<div id="s8-sig" class="sig" style="left:130px;top:160px">{bars}<div id="s8-x" class="sig-x">×</div></div>')
     for i in range(4):

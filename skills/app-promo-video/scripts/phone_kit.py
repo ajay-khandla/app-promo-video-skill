@@ -153,11 +153,15 @@ class Scene:
 
     # ---- phone screens --------------------------------------------------------
     def screen(self, key, abs_in, abs_out, enter="none", name=None):
-        """Show screenshot `key` from abs_in to abs_out. enter: none | push (navigation) | fade (state change)."""
         name = name or f"{self.id}-scr{len(self.screens)}"
         tin, tout = max(0.0, self.t(abs_in)), min(self.dur, self.t(abs_out))
         prev = self.screens[-1] if self.screens else None
         self.screens.append({"name": name, "key": key, "tin": tin, "tout": tout})
+        if SHOT[key].endswith(".mp4"):
+            # a recording is its own timed clip: fade the clip itself, never move it
+            if enter != "none":
+                self.js.append(f"tl.fromTo('#{name}', {{opacity:0}}, {{opacity:1, duration:0.22, ease:'power1.inOut'}}, {tin});")
+            return name
         if enter == "push":
             self.js.append(f"tl.fromTo('#{name} img', {{xPercent:100}}, {{xPercent:0, duration:0.42, ease:'power3.out'}}, {tin});")
             if prev:
@@ -168,12 +172,15 @@ class Scene:
 
     def phone_html(self, pid=None, screens=None, left=None, extra=""):
         pid = pid or f"{self.id}-phone"
-        left = PL if left is None else left
+        left = PL if left is None else left  # read after setup(), not at import
         screens = self.screens if screens is None else screens
-        imgs = "\n".join(
-            f'<div id="{s["name"]}" class="clip shot" data-start="{s["tin"]}" data-duration="{r(s["tout"]-s["tin"])}" data-track-index="2" style="z-index:{i+1}">'
-            f'<img src="assets/screens/{SHOT[s["key"]]}" alt="" /></div>'
-            for i, s in enumerate(screens))
+        def one(i, s):
+            src = SHOT[s["key"]]
+            timing = f'data-start="{s["tin"]}" data-duration="{r(s["tout"]-s["tin"])}" data-track-index="2" style="z-index:{i+1}"'
+            if src.endswith(".mp4"):
+                return f'<video id="{s["name"]}" class="clip shot" src="assets/screens/{src}" {timing} muted playsinline></video>'
+            return f'<div id="{s["name"]}" class="clip shot" {timing}><img src="assets/screens/{src}" alt="" /></div>'
+        imgs = "\n".join(one(i, s) for i, s in enumerate(screens))
         return (f'<div id="{pid}" class="phone" style="left:{r(left)}px;top:{PT}px">'
                 f'<div class="screen">{imgs}{extra}</div></div>')
 
@@ -445,6 +452,7 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
         box-shadow:0 30px 60px rgba(27,38,32,0.18), inset 0 0 0 2px #2a2a2a; }}
       .screen {{ position:relative; width:{r(SW)}px; height:{r(SH)}px; border-radius:{SCREEN_RADIUS}px; overflow:hidden; background:{C['ground']}; }}
       .screen > .shot {{ position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; }}
+      .screen > video.shot {{ object-fit:fill; display:block; }}
       .screen > .shot > img {{ position:absolute; left:0; top:0; width:100%; height:100%; display:block; }}
       .tap {{ position:absolute; background:rgba(27,38,32,0.14); border-radius:8px; opacity:0; z-index:40; }}
       .finger {{ background:rgba(27,38,32,0.30); border:2px solid rgba(255,255,255,0.85); border-radius:50%; z-index:42;

@@ -28,4 +28,5 @@
 - Style picked from three references (REFERENCE.md): Property Toolbox's step-by-step walkthrough plus Groundswell's result lifts, check badges, count-ups and brand sweeps. Wellio was left out (stock people, glass/mesh gradients).
 - Added: full-phone-first openings; six result lifts; count-up amounts; finger dots on every tap; three green sweeps; one accent word in the S1, S6 and S9 titles.
 - Fixed: render frame 0, wrapped S6 title, the "दिया?" overlap, voice loudness (MP4 measured, not heard).
-- Not done: new captures from the app. The app needs Dart ≥ 3.12.2 and this Mac's Flutter ships 3.11.5, and the demo-data simulator from the app's docs is not on this machine.
+- Real captures (after upgrading Flutter to 3.47.8): the app was built from a scratch copy for the iPhone 17 simulator, set up as a fresh Hindi book (Green Valley Farm, कपास), and two flows were recorded — S3 now plays the real add-expense walkthrough (₹6400 typed, saved, home updates to ₹12,800) and S8 the same flow with no Wi-Fi or mobile signal in the status bar (saved, home shows खर्च ₹15,300). Raw takes: inputs/kheti-hisab/screens/ios/recordings/.
+- Still open: the restore-on-new-phone screen with the cloud option selected (needs a Pro sign-in).
