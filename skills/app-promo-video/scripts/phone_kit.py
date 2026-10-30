@@ -50,13 +50,16 @@ TITLE_ZONE_RIGHT = 905
 FRAME = {"cx_min": 1330, "cy": 470, "max_w": 940, "max_h": 780, "right_max": 1850}
 LIFT_BOX = (925, 70, 1870, 900)
 LIFT_DY = 0
+FOCUS = "outline"    # "outline": a plain marigold box | "spotlight": the rest of the screen dims, the box glows and pulses once
+TAP = "dot"          # "dot": press highlight + finger dot | "ripple": the same plus a ring that spreads from the finger
 BASE = {"x": 0.0, "y": 0.0, "scale": 1.0}
 CENTER = {"x": 0.0, "y": 0.0, "scale": 1.0}
 
 
 def setup(root, total, scenes, shots, colors, fonts, font_main, font_display, lang="en",
           screen_px=(1206, 2622), scale=0.33, bezel=13, phone_center_x=1240, phone_top=40,
-          screen_radius=58, title_zone_right=905, width=1920, height=1080, frame=None, lift_box=None, lift_dy=0):
+          screen_radius=58, title_zone_right=905, width=1920, height=1080, frame=None, lift_box=None, lift_dy=0,
+          focus="outline", tap="dot"):
     """Landscape defaults put titles left and the phone right. For portrait (1080 x 1920) pass e.g.
     phone_center_x=540, phone_top=560, scale=0.5, title_zone_right=0,
     frame={"cx_min": 540, "cy": 1180, "max_w": 1000, "max_h": 1100, "right_max": 1040},
@@ -73,7 +76,7 @@ def setup(root, total, scenes, shots, colors, fonts, font_main, font_display, la
              FONTS=list(fonts), FONT_MAIN=font_main, FONT_DISPLAY=font_display, LANG=lang,
              W=width, H=height, S=scale, SW=sw, SH=sh, BEZ=bezel, PW=pw, PH=ph, PL=pl, PT=phone_top,
              OX=pl + bezel, OY=phone_top + bezel, SCREEN_RADIUS=screen_radius,
-             TITLE_ZONE_RIGHT=title_zone_right,
+             TITLE_ZONE_RIGHT=title_zone_right, FOCUS=focus, TAP=tap,
              FRAME=frame or {"cx_min": 1330, "cy": 470, "max_w": 940, "max_h": 780, "right_max": width - 70},
              LIFT_BOX=lift_box or (title_zone_right + 20, 70, width - 50, 900), LIFT_DY=lift_dy,
              CENTER={"x": width / 2 - phone_center_x, "y": 0.0, "scale": 1.0})
@@ -208,6 +211,12 @@ class Scene:
         self.js.append(f"tl.fromTo('#{tid}f', {{opacity:0, scale:1.5}}, {{opacity:1, scale:1, duration:0.25, ease:'power2.out'}}, {r(max(0, t-0.35))});"
                        f"tl.fromTo('#{tid}f', {{scale:1}}, {{scale:0.8, duration:0.08, ease:'power2.in', immediateRender:false}}, {t});"
                        f"tl.fromTo('#{tid}f', {{scale:0.8, opacity:1}}, {{scale:1, opacity:0, duration:0.3, ease:'power2.out', immediateRender:false}}, {r(t+0.1)});")
+        if TAP == "ripple":
+            # a ring spreads from the fingertip as it presses (~130 px on screen whatever the zoom)
+            rd = r(130 / max(1.0, self.cam_state["scale"]))
+            rx0, ry0 = r((rx + rw / 2) * S - rd / 2), r((ry + rh / 2) * S - rd / 2)
+            self.html.append(f'<div id="{tid}r" class="tap ripple" style="left:{rx0}px;top:{ry0}px;width:{rd}px;height:{rd}px"></div>')
+            self.js.append(f"tl.fromTo('#{tid}r', {{opacity:0.95, scale:0.2}}, {{opacity:0, scale:1, duration:0.6, ease:'power2.out', immediateRender:false}}, {t});")
 
     # ---- focus outline ----------------------------------------------------------
     def ol(self, abs_t, rect=None):
@@ -222,8 +231,12 @@ class Scene:
         x, y, w, h = rect
         oid = f"{self.id}-ol{self.n_ol}"
         self.n_ol += 1
-        self.ol_html.append(f'<div id="{oid}" class="ol" style="left:{r(x*S-3)}px;top:{r(y*S-3)}px;width:{r(w*S+6)}px;height:{r(h*S+6)}px"></div>')
+        spot = FOCUS == "spotlight"
+        inner = '<div class="ol-ring"></div>' if spot else ""
+        self.ol_html.append(f'<div id="{oid}" class="ol{" spot" if spot else ""}" style="left:{r(x*S-3)}px;top:{r(y*S-3)}px;width:{r(w*S+6)}px;height:{r(h*S+6)}px">{inner}</div>')
         self.js.append(f"tl.fromTo('#{oid}', {{opacity:0, scale:1.08}}, {{opacity:1, scale:1, duration:0.3, ease:'expo.out'}}, {t});")
+        if spot:  # one soft pulse after it lands
+            self.js.append(f"tl.fromTo('#{oid} .ol-ring', {{opacity:0.9, scale:1}}, {{opacity:0, scale:1.12, duration:0.75, ease:'power2.out', immediateRender:false}}, {r(t+0.28)});")
         self.ol_state = oid
 
     # ---- left-zone text -------------------------------------------------------
@@ -389,7 +402,8 @@ def build_captions(caps, bottom=52, size=44):
     Leave out lines whose words are already a title on screen."""
     groups, js = [], []
     for i, (a, b, text) in enumerate(caps):
-        d = r(b - a + 0.12)
+        nxt = caps[i + 1][0] if i + 1 < len(caps) else None
+        d = r(b - a + 0.12) if nxt is None else r(min(b - a + 0.12, nxt - a - 0.02))  # never two on screen
         groups.append(f'<div id="cap{i}" class="clip cap" data-start="{a}" data-duration="{d}" data-track-index="5">'
                       f'<div class="cap-row"><span class="cap-t">{text}</span></div></div>')
         js.append(f"tl.fromTo('#cap{i} .cap-t', {{opacity:0, filter:'blur(4px)'}}, {{opacity:1, filter:'blur(0px)', duration:0.12, ease:'power2.out'}}, {a});")
@@ -484,6 +498,10 @@ def build_index(sfx=(), voiceover="assets/audio/voiceover.wav", vo_volume=1.0, m
       .sweep {{ position:absolute; left:{W // 2 - 1700}px; top:{H // 2 - 1700}px; width:3400px; height:3400px; border-radius:50%; z-index:70; }}
       .ol {{ position:absolute; border:2.2px solid {C['accent']}; border-radius:9px; opacity:0; z-index:41;
         box-shadow:0 0 0 1px rgba(232,162,58,0.25); }}
+      .ol.spot {{ border-width:3px; border-radius:10px;
+        box-shadow:0 0 0 3000px rgba(18,28,22,0.30), 0 0 18px 2px rgba(232,162,58,0.55); }}
+      .ol-ring {{ position:absolute; left:-4px; top:-4px; right:-4px; bottom:-4px; border:2px solid {C['accent']}; border-radius:12px; opacity:0; }}
+      .ripple {{ background:rgba(232,162,58,0.16); border:3px solid {C['accent']}; border-radius:50%; z-index:43; }}
       .ttl {{ position:absolute; line-height:1.25; opacity:0; }}
       .amt {{ position:absolute; opacity:0; }}
       .amt-l {{ font-family:var(--font-main); font-weight:700; font-size:48px; color:{C['ink2']}; }}

@@ -25,8 +25,8 @@ Numbers are for a 1920×1080 canvas at 30 fps with 1206×2622 iPhone screenshots
 
 ## Attention
 
-- **Focus outline**: accent 2.2 px stroke, radius 9, around a region; lands with scale 1.08→1 in 0.3 s `expo.out` on the spoken word, previous one fades in 0.15 s. Use it for the one thing the sentence names.
-- **Tap**: press highlight rgba(ink, 0.14) over the tapped region, 0.06 s in / 0.2 s out. No ripples or rings.
+- **Focus outline**: accent 2.2 px stroke, radius 9, around a region; lands with scale 1.08→1 in 0.3 s `expo.out` on the spoken word, previous one fades in 0.15 s. Use it for the one thing the sentence names. With `setup(focus="spotlight")` the rest of the screen dims to ~30% (a 3000 px box-shadow on the box), the border glows and one ring pulses out 0.28 s after it lands. Use spotlight for tutorials on busy forms; keep the plain outline for trailers.
+- **Tap**: press highlight rgba(ink, 0.14) over the tapped region, 0.06 s in / 0.2 s out. With `setup(tap="ripple")` an accent ring (~130 px on screen) also spreads from the fingertip in 0.6 s `power2.out`. Use the ripple for step-by-step tutorials, where every tap must read; keep the default for trailers.
 - **Numbers**: label 48 px + value 96–150 px in the display face, in the colour the app uses for that kind of number (income green, expense red/clay, due red); lands on the word, holds ≥ 0.5 s + 0.3 s/word (the payoff ≥ 1.4 s).
 - **Lists that grow on the words** ("Spraying • Irrigation • Fertiliser"): one line per spoken word; vary the entrance between scenes (blur-in vs grey→ink) so it doesn't read as a template.
 

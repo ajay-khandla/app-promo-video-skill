@@ -39,7 +39,7 @@ Driving the simulator:
 
 For a tutorial, record one long take of the whole flow. Then cut one clip per voice line with `scripts/cut_takes.py`: anchors `(film_t, take_t, play_s)` jump to each event on its spoken word, play the animation, and hold.
 
-The simulator writes variable-frame-rate video, so a seek lands on the next frame that changed, not on the time you asked for. Find event times with `fps=10,tblend=all_mode=difference,signalstats` (YAVG per frame), not by sampling seeks. Typing shows up as YAVG of only about 0.1–0.2.
+The simulator writes variable-frame-rate video, so a seek lands on the next frame that changed, not on the time you asked for. Find event times with `fps=10,tblend=all_mode=difference,signalstats` (YAVG per frame), not by sampling seeks. Typing shows up as YAVG of only about 0.1–0.2. To check a moment by eye, use frame timestamps (`showinfo` with `-fps_mode passthrough`) or the same `fps=30,trim` path the cutter uses. Don't use `-ss` seeks: on a static screen the recording has no frames, so a seek to 528.0 returns the next change (530.4) and makes the event look 2 s early.
 
 1. Find each event: big screen changes with ffmpeg scene detection on a 200-px copy; small ones (digits appearing) with a frame difference on a crop of that field at 10 fps.
 2. Build one clip per scene with exact holds and plays (`hold` a frame for N s, `play` t0–t1), concatenated at 30 fps, so each event lands on its word. A scene's clip runs from the moment it first shows to the scene's end.

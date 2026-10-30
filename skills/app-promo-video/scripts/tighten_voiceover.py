@@ -37,6 +37,19 @@ def silences(f):
     return list(zip(s, e))
 
 
+def hard_stop(f):
+    """True when a clip ends in pure digital silence right after loud speech, i.e. the generator cut the last
+    word off (the clip has no room tone and stops dead). Re-generate such a clip; a fade can't bring words back."""
+    tail = subprocess.run(["ffmpeg", "-v", "error", "-sseof", "-2", "-i", str(f), "-af",
+                           "asetnsamples=n=2205,astats=metadata=1:reset=1,ametadata=print:key=lavfi.astats.Overall.RMS_level:file=/dev/stdout",
+                           "-ar", "44100", "-f", "null", "-"], capture_output=True, text=True).stdout
+    lv = [float(x) if x not in ("-inf", "inf") else -999.0 for x in re.findall(r"RMS_level=(-?inf|[-\d.]+)", tail)]
+    for i in range(len(lv) - 8):   # loud, then dead (below room tone, ~-86 dB) within 150 ms
+        if lv[i] > -30 and all(v < -120 for v in lv[i + 3:i + 8]):
+            return True
+    return False
+
+
 def duration(f):
     return float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                           "-of", "csv=p=0", str(f)]).decode())
@@ -57,6 +70,10 @@ def main():
     if not clips:
         raise SystemExit(f"no audio files in {a.clips}")
     segments, scenes, words, t = [], [], [], 0.0
+    for f in clips:
+        if hard_stop(f):
+            print(f"WARNING {f.name}: ends in digital silence right after speech — the last word is probably cut off. "
+                  f"Re-generate it before building the video.")
     for i, f in enumerate(clips):
         d, last = duration(f), i == len(clips) - 1
         keep, cur = [], 0.0
